@@ -1,6 +1,5 @@
 package com.depromeet.qr.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,20 +17,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Comment {
+public class Member {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long commentId;
-
-	@Column(nullable = false)
-	private String content;
-	private String target;
-
+	private Long mid;
 	@Builder.Default
-	private Integer likeCount = 0;
+	private String role="USER";
 
 	@ManyToOne
 	@JoinColumn(name = "seminarId")
 	private SeminarRoom seminarRoom;
-
 }
