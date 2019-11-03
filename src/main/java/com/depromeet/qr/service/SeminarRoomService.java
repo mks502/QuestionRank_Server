@@ -6,12 +6,13 @@ import static com.rosaloves.bitlyj.Bitly.shorten;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
-import com.depromeet.qr.dto.SeminarAndMemberDto;
 import com.depromeet.qr.entity.Member;
 import com.depromeet.qr.entity.SeminarRoom;
 import com.depromeet.qr.repository.MemberRepository;
@@ -29,7 +30,8 @@ public class SeminarRoomService {
 	@Value("${qr.addr}")
 	private String QR_ADDR;
 
-	public SeminarRoom createSeminar(SeminarRoom seminarRoom) throws MalformedURLException, IOException {
+	@Transactional
+	public Member createSeminar(SeminarRoom seminarRoom) throws MalformedURLException, IOException {
 		SeminarRoom seminar = seminarRoomRepository.save(seminarRoom);
 		Long seminarId = seminar.getSeminarId();
 		SeminarRoom newSeminar = seminarRoomRepository.findOneBySeminarId(seminarId);
@@ -41,12 +43,13 @@ public class SeminarRoomService {
 		newSeminar.setFullURL(full);
 		longURL = longURL.concat(full);
 		newSeminar.setShortURL(createShortUrl(longURL));
-		seminarRoomRepository.save(newSeminar);
-
-		return newSeminar;
+		Member member = Member.builder().role("ADMIN").seminarRoom(seminarRoomRepository.save(newSeminar))
+				.build();
+		return memberRepository.save(member);
 	}
 
 	// bit.ly api를 사용하여 fullUrl을 shortUrl로 변환
+	@Transactional
 	public String createShortUrl(String fullUrl) throws MalformedURLException, IOException {
 
 		Url url = as("o_1duq7b20be", "R_01bd87bf046e49cd93816dd681925740").call(shorten(fullUrl));
@@ -54,13 +57,14 @@ public class SeminarRoomService {
 
 		return shortUrl;
 	}
-
+	
 	public SeminarRoom findSeminar(Long seminarId) {
 		SeminarRoom seminarRoom = seminarRoomRepository.findOneBySeminarId(seminarId);
 		return seminarRoom;
 	}
 
-	public SeminarAndMemberDto enterSeminarByMember(Long seminarId, Long mid) {
+	@Transactional
+	public Member enterSeminarByMember(Long seminarId, Long mid) {
 		SeminarRoom seminar = findSeminar(seminarId);
 		if (seminar == null)
 			return null;
@@ -69,17 +73,16 @@ public class SeminarRoomService {
 			member = Member.builder().role("USER").seminarRoom(seminar).build();
 			member = memberRepository.save(member);
 		}
-		return SeminarAndMemberDto.builder().member(member).seminarRoom(seminar).build();
+		return member;
 	}
 
-	public SeminarAndMemberDto enterSeminarByAdmin(Long seminarId, String password) {
+	public Member enterSeminarByAdmin(Long seminarId, String password) {
 		SeminarRoom seminar = findSeminar(seminarId);
 		if (seminar == null)
 			return null;
 		if (!seminar.getSeminarPassword().equals(password))
 			return null;
 		Member member = memberRepository.findOneBySeminarRoomAndRole(seminar, "ADMIN");
-		SeminarAndMemberDto seminarAndMember = SeminarAndMemberDto.builder().seminarRoom(seminar).member(member).build();
-		return seminarAndMember;
+		return member;
 	}
 }

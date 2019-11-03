@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.depromeet.qr.dto.SeminarAdminDto;
-import com.depromeet.qr.dto.SeminarAndMemberDto;
+import com.depromeet.qr.entity.Member;
 import com.depromeet.qr.entity.SeminarRoom;
 import com.depromeet.qr.service.SeminarRoomService;
 
@@ -22,15 +22,15 @@ public class SeminarRoomController {
 	SeminarRoomService seminarRoomService;
 	
 	@PostMapping("api/seminar")
-	public SeminarRoom createSeminarRoom(@RequestBody SeminarRoom seminarRoom) throws MalformedURLException, IOException {
+	public Member createSeminarRoom(@RequestBody SeminarRoom seminarRoom) throws MalformedURLException, IOException {
 		return seminarRoomService.createSeminar(seminarRoom);
 	}
 	@GetMapping("api/seminar/enter/{seminarid}/{mid}")
-	public SeminarAndMemberDto enterSeminarByMember(@PathVariable Long seminarid,@PathVariable Long mid){
+	public Member enterSeminarByMember(@PathVariable Long seminarid,@PathVariable Long mid){
 		return seminarRoomService.enterSeminarByMember(seminarid, mid);
 	}
 	@GetMapping("api/seminar/enter/admin")
-	public SeminarAndMemberDto enterSeminarByAdmin(@ModelAttribute SeminarAdminDto seminarAdmin){
+	public Member enterSeminarByAdmin(@ModelAttribute SeminarAdminDto seminarAdmin){
 		return seminarRoomService.enterSeminarByAdmin(seminarAdmin.getSeminarId(), seminarAdmin.getPassword());
 	}
 	
