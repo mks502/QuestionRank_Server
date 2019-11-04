@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.depromeet.qr.entity.Member;
 import com.depromeet.qr.entity.SeminarRoom;
+import com.depromeet.qr.exception.NotFoundException;
 import com.depromeet.qr.repository.MemberRepository;
 import com.depromeet.qr.repository.SeminarRoomRepository;
 
@@ -20,7 +21,7 @@ public class MemberService {
 	public Member createMember(Long seminarId) {
 		SeminarRoom seminarRoom = seminarRoomRepository.findOneBySeminarId(seminarId);
 		if (seminarRoom == null)
-			return null;
+			throw new NotFoundException();
 		Member member = Member.builder().role("USER").seminarRoom(seminarRoom).build();
 		if (memberRepository.findOneBySeminarRoom(seminarRoom) == null)
 			member.setRole("ADMIN");
@@ -30,7 +31,7 @@ public class MemberService {
 	public Member getMember(Long mid) {
 		Member member = memberRepository.findOneByMid(mid);
 		if (member == null)
-			return null;
+			throw new NotFoundException("존재하지 않는 멤버입니다");
 		return member;
 	}
 

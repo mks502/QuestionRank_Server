@@ -29,8 +29,6 @@ public class MemberController {
 	@GetMapping("api/member/{mid}")
 	public ResponseEntity<Member> getMember(@PathVariable Long mid) {
 		Member member = memberService.getMember(mid);
-		if (member == null)
-			return ResponseEntity.badRequest().body(null);
 		return ResponseEntity.ok().body(member);
 	}
 	@GetMapping("api/members/{seminarId}")
