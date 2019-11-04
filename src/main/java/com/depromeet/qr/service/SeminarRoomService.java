@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import com.depromeet.qr.entity.Member;
 import com.depromeet.qr.entity.SeminarRoom;
+import com.depromeet.qr.exception.BadRequestException;
+import com.depromeet.qr.exception.NotFoundException;
 import com.depromeet.qr.repository.MemberRepository;
 import com.depromeet.qr.repository.SeminarRoomRepository;
 import com.rosaloves.bitlyj.Url;
@@ -43,8 +45,7 @@ public class SeminarRoomService {
 		newSeminar.setFullURL(full);
 		longURL = longURL.concat(full);
 		newSeminar.setShortURL(createShortUrl(longURL));
-		Member member = Member.builder().role("ADMIN").seminarRoom(seminarRoomRepository.save(newSeminar))
-				.build();
+		Member member = Member.builder().role("ADMIN").seminarRoom(seminarRoomRepository.save(newSeminar)).build();
 		return memberRepository.save(member);
 	}
 
@@ -57,18 +58,19 @@ public class SeminarRoomService {
 
 		return shortUrl;
 	}
-	
+
 	public SeminarRoom findSeminar(Long seminarId) {
 		SeminarRoom seminarRoom = seminarRoomRepository.findOneBySeminarId(seminarId);
+		if (seminarRoom == null)
+			throw new NotFoundException("Not Found SeminarRoom");
 		return seminarRoom;
 	}
 
 	@Transactional
 	public Member enterSeminarByMember(Long seminarId, Long mid) {
 		SeminarRoom seminar = findSeminar(seminarId);
-		if (seminar == null)
-			return null;
-		Member member = memberRepository.findOneBySeminarRoomAndMid(seminar,mid);
+
+		Member member = memberRepository.findOneBySeminarRoomAndMid(seminar, mid);
 		if (member == null) {
 			member = Member.builder().role("USER").seminarRoom(seminar).build();
 			member = memberRepository.save(member);
@@ -78,10 +80,8 @@ public class SeminarRoomService {
 
 	public Member enterSeminarByAdmin(Long seminarId, String password) {
 		SeminarRoom seminar = findSeminar(seminarId);
-		if (seminar == null)
-			return null;
 		if (!seminar.getSeminarPassword().equals(password))
-			return null;
+			throw new BadRequestException("wrong password");
 		Member member = memberRepository.findOneBySeminarRoomAndRole(seminar, "ADMIN");
 		return member;
 	}
