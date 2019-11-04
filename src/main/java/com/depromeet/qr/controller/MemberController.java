@@ -22,8 +22,7 @@ public class MemberController {
 	@PostMapping("api/member/join")
 	public ResponseEntity<Member> join(@RequestBody Long seminarId) {
 		Member member = memberService.createMember(seminarId);
-		if (member == null)
-			return ResponseEntity.badRequest().body(null);
+		
 		return ResponseEntity.ok().body(member);
 	}
 	@GetMapping("api/member/{mid}")
@@ -34,8 +33,7 @@ public class MemberController {
 	@GetMapping("api/members/{seminarId}")
 	public ResponseEntity<List<Member>> getMembersBySeminarId(@PathVariable Long seminarId) {
 		List<Member> members = memberService.getMembersBySeminarRoom(seminarId);
-		if (members == null)
-			return ResponseEntity.badRequest().body(null);
+	
 		return ResponseEntity.ok().body(members);
 	}
 	@DeleteMapping("api/members/{seminarId}")

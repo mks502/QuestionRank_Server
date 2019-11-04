@@ -38,16 +38,16 @@ public class MemberService {
 	public List<Member> getMembersBySeminarRoom(Long seminarId) {
 		SeminarRoom seminarRoom = seminarRoomRepository.findOneBySeminarId(seminarId);
 		if (seminarRoom == null)
-			return null;
+			throw new NotFoundException();
 		List<Member> members = memberRepository.findAllBySeminarRoom(seminarRoom);
 		if (members == null)
-			return null;
+			throw new NotFoundException();
 		return members;
 	}
 
 	public boolean deleteMembersBySeminarRoom(Long seminarId) {
 		List<Member> members = getMembersBySeminarRoom(seminarId);
-		if(members == null)
+		if (members == null)
 			return false;
 		memberRepository.deleteInBatch(members);
 		return true;
