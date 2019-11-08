@@ -55,4 +55,13 @@ public class CommentService {
 		commentRepository.deleteInBatch(comments);
 		return true;
 	}
+	
+	@Transactional
+	public List<Comment> getCommentsBySeminarRoom (Long seminarId) {
+		List<Comment> comments = commentRepository.findAllBySeminarRoom(seminarId);
+		if (comments == null)
+			throw new NotFoundException();
+		return comments;
+	}
+	
 }
