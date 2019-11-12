@@ -8,7 +8,7 @@ logging:
 
 spring:
   profiles:
-    active: dev
+    active: prod
 
 ---
 
@@ -38,7 +38,7 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:mariadb://localhost:3306/qr?useUnicode=true&characterEncoding=utf8
+    url: jdbc:mariadb://localhost:3309/qr?useUnicode=true&characterEncoding=utf8
     username: root
     password: root
   h2:
@@ -47,4 +47,4 @@ spring:
 
 
 server:
-  port: 8080
+  port: 8081
