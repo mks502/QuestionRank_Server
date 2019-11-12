@@ -61,9 +61,6 @@ pom.xml.releaseBackup
 pom.xml.next
 release.properties
 
-### config.properties
-config.properties
-
 
 ### VS Code ###
 .vscode/
