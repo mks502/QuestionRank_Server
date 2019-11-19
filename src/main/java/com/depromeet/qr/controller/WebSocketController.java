@@ -15,9 +15,9 @@ public class WebSocketController {
 	@Autowired
 	CommentService commentService;
 	
-	@MessageMapping("/comment")
-	@SendTo("/seminar/{id}")
-	public Comment commentMessage(@DestinationVariable Long id,CommentDto commentDto) {
+	@MessageMapping("/comment/{seminarid}")
+	@SendTo("/seminar/{seminarid}")
+	public Comment commentMessage(@DestinationVariable Long seminarid,CommentDto commentDto) {
 		return commentService.createComment(commentDto);
 	}
 }
