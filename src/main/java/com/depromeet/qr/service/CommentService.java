@@ -13,6 +13,7 @@ import com.depromeet.qr.entity.Comment;
 import com.depromeet.qr.entity.LikeEntity;
 import com.depromeet.qr.entity.Member;
 import com.depromeet.qr.entity.SeminarRoom;
+import com.depromeet.qr.exception.BadRequestException;
 import com.depromeet.qr.exception.NotFoundException;
 import com.depromeet.qr.repository.CommentRepository;
 import com.depromeet.qr.repository.LikeEntityRepository;
@@ -93,5 +94,15 @@ public class CommentService {
 		comment.setLikeCount(comment.getLikeCount()-1);
 		commentRepository.save(comment);
 		return CommentAndLikeDto.builder().comment(comment).like(like).build();
+	}
+	
+	@Transactional
+	public boolean deleteCommentByAdmin(Long commentId,Long memberId) {
+		Comment comment = getComment(commentId);
+		Member member = memberRepository.findById(memberId).orElseThrow(()-> new NotFoundException());
+		if(member.getRole() != "Admin")
+			throw new BadRequestException();
+		commentRepository.delete(comment);
+		return true;
 	}
 }

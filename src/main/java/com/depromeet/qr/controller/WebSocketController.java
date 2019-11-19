@@ -32,4 +32,9 @@ public class WebSocketController {
 	public CommentAndLikeDto commentUnLike(@DestinationVariable Long seminarid, CommentDto commentDto) {
 		return commentService.downLikeCount(commentDto.getCommentId(), commentDto.getMid());
 	}
+	@MessageMapping("/comment/{seminarid}/delete")
+	@SendTo("/seminar/{seminarid}")
+	public boolean commentDelete(@DestinationVariable Long seminarid, CommentDto commentDto) {
+		return commentService.deleteCommentByAdmin(commentDto.getCommentId(), commentDto.getMid());
+	}
 }
