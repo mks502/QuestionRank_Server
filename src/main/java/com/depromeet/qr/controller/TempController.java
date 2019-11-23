@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.depromeet.qr.dto.CommentAndLikeDto;
 import com.depromeet.qr.dto.CommentDto;
+import com.depromeet.qr.dto.CommentRequestDto;
 import com.depromeet.qr.entity.Comment;
 import com.depromeet.qr.service.CommentService;
 
@@ -22,15 +23,15 @@ public class TempController {
 		return commentService.createComment(commentDto);
 	}
 	@PostMapping("/comment/{seminarid}/like")
-	public CommentAndLikeDto commentLike(@DestinationVariable Long seminarid, CommentDto commentDto) {
-		return commentService.upLikeCount(commentDto.getCommentId(), commentDto.getMid());
+	public CommentAndLikeDto commentLike(@DestinationVariable Long seminarid, CommentRequestDto commentRequestDto) {
+		return commentService.upLikeCount(commentRequestDto.getCommentId(), commentRequestDto.getMid());
 	}
 	@PostMapping("/comment/{seminarid}/unlike")
-	public CommentAndLikeDto commentUnLike(@DestinationVariable Long seminarid, CommentDto commentDto) {
-		return commentService.downLikeCount(commentDto.getCommentId(), commentDto.getMid());
+	public CommentAndLikeDto commentUnLike(@DestinationVariable Long seminarid, CommentRequestDto commentRequestDto) {
+		return commentService.downLikeCount(commentRequestDto.getCommentId(), commentRequestDto.getMid());
 	}
 	@PostMapping("/comment/{seminarid}/delete")
-	public boolean commentDelete(@DestinationVariable Long seminarid, CommentDto commentDto) {
-		return commentService.deleteCommentByAdmin(commentDto.getCommentId(), commentDto.getMid());
+	public boolean commentDelete(@DestinationVariable Long seminarid, CommentRequestDto commentRequestDto) {
+		return commentService.deleteCommentByAdmin(commentRequestDto.getCommentId(), commentRequestDto.getMid());
 	}
 }

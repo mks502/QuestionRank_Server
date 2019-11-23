@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 
 import com.depromeet.qr.dto.CommentAndLikeDto;
 import com.depromeet.qr.dto.CommentDto;
+import com.depromeet.qr.dto.CommentRequestDto;
 import com.depromeet.qr.entity.Comment;
 import com.depromeet.qr.service.CommentService;
 
@@ -24,17 +25,17 @@ public class WebSocketController {
 
 	@MessageMapping("/comment/{seminarid}/like")
 	@SendTo("/seminar/{seminarid}")
-	public CommentAndLikeDto commentLike(@DestinationVariable Long seminarid, CommentDto commentDto) {
-		return commentService.upLikeCount(commentDto.getCommentId(), commentDto.getMid());
+	public CommentAndLikeDto commentLike(@DestinationVariable Long seminarid, CommentRequestDto commentRequestDto) {
+		return commentService.upLikeCount(commentRequestDto.getCommentId(), commentRequestDto.getMid());
 	}
 	@MessageMapping("/comment/{seminarid}/unlike")
 	@SendTo("/seminar/{seminarid}")
-	public CommentAndLikeDto commentUnLike(@DestinationVariable Long seminarid, CommentDto commentDto) {
-		return commentService.downLikeCount(commentDto.getCommentId(), commentDto.getMid());
+	public CommentAndLikeDto commentUnLike(@DestinationVariable Long seminarid, CommentRequestDto commentRequestDto) {
+		return commentService.downLikeCount(commentRequestDto.getCommentId(), commentRequestDto.getMid());
 	}
 	@MessageMapping("/comment/{seminarid}/delete")
 	@SendTo("/seminar/{seminarid}")
-	public boolean commentDelete(@DestinationVariable Long seminarid, CommentDto commentDto) {
-		return commentService.deleteCommentByAdmin(commentDto.getCommentId(), commentDto.getMid());
+	public boolean commentDelete(@DestinationVariable Long seminarid, CommentRequestDto commentRequestDto) {
+		return commentService.deleteCommentByAdmin(commentRequestDto.getCommentId(), commentRequestDto.getMid());
 	}
 }
