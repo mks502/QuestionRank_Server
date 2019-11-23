@@ -30,11 +30,12 @@ public class CommentService {
 	MemberRepository memberRepository;
 	@Autowired
 	LikeEntityRepository likeEntityRepository;
+	@Autowired
+	SeminarRoomService seminarRoomService;
 
 	@Transactional
 	public Comment createComment(CommentDto commentDto) {
-		SeminarRoom seminar = seminarRoomRepository.findById(commentDto.getSeminarId())
-				.orElseThrow(() -> new NotFoundException());
+		SeminarRoom seminar = seminarRoomService.findSeminar(commentDto.getSeminarId());
 		Member member = memberRepository.findById(commentDto.getMid()).orElseThrow(() -> new NotFoundException());
 
 		Comment comment = Comment.builder().content(commentDto.getContent()).target(commentDto.getTarget()).likeCount(0)
@@ -54,7 +55,8 @@ public class CommentService {
 
 	@Transactional
 	public boolean deleteCommentsBySeminar(Long seminarId) {
-		List<Comment> comments = commentRepository.findAllBySeminarRoom(seminarId);
+		SeminarRoom seminar = seminarRoomService.findSeminar(seminarId);
+		List<Comment> comments = commentRepository.findAllBySeminarRoom(seminar);
 		if (comments == null)
 			throw new NotFoundException();
 		commentRepository.deleteInBatch(comments);
@@ -63,7 +65,8 @@ public class CommentService {
 
 	@Transactional
 	public List<Comment> getCommentsBySeminarRoom(Long seminarId) {
-		List<Comment> comments = commentRepository.findAllBySeminarRoom(seminarId);
+		SeminarRoom seminar = seminarRoomService.findSeminar(seminarId);
+		List<Comment> comments = commentRepository.findAllBySeminarRoom(seminar);
 		if (comments == null)
 			throw new NotFoundException();
 		return comments;

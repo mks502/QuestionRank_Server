@@ -5,10 +5,11 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.depromeet.qr.entity.Comment;
+import com.depromeet.qr.entity.SeminarRoom;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 	public Comment findOneBycommentId(Long commentId);
 
-	public List<Comment> findAllBySeminarRoom(Long seminarId);
+	public List<Comment> findAllBySeminarRoom(SeminarRoom seminar);
 
 }
