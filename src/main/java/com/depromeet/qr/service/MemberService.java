@@ -2,6 +2,8 @@ package com.depromeet.qr.service;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ public class MemberService {
 	@Autowired
 	SeminarRoomRepository seminarRoomRepository;
 
+	@Transactional
 	public Member createMember(Long seminarId) {
 		SeminarRoom seminarRoom = seminarRoomRepository.findOneBySeminarId(seminarId);
 		if (seminarRoom == null)
@@ -28,6 +31,7 @@ public class MemberService {
 		return memberRepository.save(member);
 	}
 
+	@Transactional
 	public Member getMember(Long mid) {
 		Member member = memberRepository.findOneByMid(mid);
 		if (member == null)
@@ -35,6 +39,7 @@ public class MemberService {
 		return member;
 	}
 
+	@Transactional
 	public List<Member> getMembersBySeminarRoom(Long seminarId) {
 		SeminarRoom seminarRoom = seminarRoomRepository.findOneBySeminarId(seminarId);
 		if (seminarRoom == null)
@@ -45,6 +50,7 @@ public class MemberService {
 		return members;
 	}
 
+	@Transactional
 	public boolean deleteMembersBySeminarRoom(Long seminarId) {
 		List<Member> members = getMembersBySeminarRoom(seminarId);
 		if (members == null)

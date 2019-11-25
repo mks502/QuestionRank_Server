@@ -78,6 +78,7 @@ public class SeminarRoomService {
 		return member;
 	}
 
+	@Transactional
 	public Member enterSeminarByAdmin(Long seminarId, String password) {
 		SeminarRoom seminar = findSeminar(seminarId);
 		if (!seminar.getSeminarPassword().equals(password))
