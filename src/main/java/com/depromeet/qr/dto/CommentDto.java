@@ -8,8 +8,6 @@ public class CommentDto {
 
 	private String content;
 	private String target;
-
-	private Long commentId;
 	private Long seminarId;
 	private Long mid;
 
