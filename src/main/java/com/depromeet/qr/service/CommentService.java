@@ -7,8 +7,8 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.depromeet.qr.dto.CommentAndLikeDto;
 import com.depromeet.qr.dto.CommentDto;
+import com.depromeet.qr.dto.CommentResponseDto;
 import com.depromeet.qr.entity.Comment;
 import com.depromeet.qr.entity.LikeEntity;
 import com.depromeet.qr.entity.Member;
@@ -34,13 +34,14 @@ public class CommentService {
 	SeminarRoomService seminarRoomService;
 
 	@Transactional
-	public Comment createComment(CommentDto commentDto) {
+	public CommentResponseDto createComment(CommentDto commentDto) {
 		SeminarRoom seminar = seminarRoomService.findSeminar(commentDto.getSeminarId());
 		Member member = memberRepository.findById(commentDto.getMid()).orElseThrow(() -> new NotFoundException());
 
 		Comment comment = Comment.builder().content(commentDto.getContent()).target(commentDto.getTarget()).likeCount(0)
 				.member(member).seminarRoom(seminar).build();
-		return commentRepository.save(comment);
+		Comment newComment = commentRepository.save(comment);
+		return CommentResponseDto.builder().comment(newComment).type("comment").build();
 	}
 
 	@Transactional
@@ -73,7 +74,7 @@ public class CommentService {
 	}
 
 	@Transactional
-	public CommentAndLikeDto upLikeCount(Long commentId, Long memberId) {
+	public CommentResponseDto upLikeCount(Long commentId, Long memberId) {
 		Comment comment = getComment(commentId);
 		Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException());
 		if (likeEntityRepository.findOneByCommentAndMember(comment, member) != null)
@@ -83,11 +84,11 @@ public class CommentService {
 		likeEntityRepository.save(like);
 		comment.setLikeCount(comment.getLikeCount()+1);
 		commentRepository.save(comment);
-		return CommentAndLikeDto.builder().comment(comment).like(like).build();
+		return CommentResponseDto.builder().comment(comment).type("like").build();
 	}
 	
 	@Transactional
-	public CommentAndLikeDto downLikeCount(Long commentId, Long memberId) {
+	public CommentResponseDto downLikeCount(Long commentId, Long memberId) {
 		Comment comment = getComment(commentId);
 		Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException());
 		LikeEntity like = likeEntityRepository.findOneByCommentAndMember(comment, member);
@@ -96,7 +97,7 @@ public class CommentService {
 		likeEntityRepository.delete(like);
 		comment.setLikeCount(comment.getLikeCount()-1);
 		commentRepository.save(comment);
-		return CommentAndLikeDto.builder().comment(comment).like(like).build();
+		return CommentResponseDto.builder().comment(comment).type("unlike").build();
 	}
 	
 	@Transactional

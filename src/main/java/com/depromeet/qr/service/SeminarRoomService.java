@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
+import com.depromeet.qr.dto.SeminarRoomDto;
 import com.depromeet.qr.entity.Member;
 import com.depromeet.qr.entity.SeminarRoom;
 import com.depromeet.qr.exception.BadRequestException;
@@ -33,8 +34,8 @@ public class SeminarRoomService {
 	private String QR_ADDR;
 
 	@Transactional
-	public Member createSeminar(SeminarRoom seminarRoom) throws MalformedURLException, IOException {
-		SeminarRoom seminar = seminarRoomRepository.save(seminarRoom);
+	public Member createSeminar(SeminarRoomDto seminarRoomDto) throws MalformedURLException, IOException {
+		SeminarRoom seminar = seminarRoomRepository.save(seminarRoomDto.toEntity());
 		Long seminarId = seminar.getSeminarId();
 		SeminarRoom newSeminar = seminarRoomRepository.findOneBySeminarId(seminarId);
 		String full = "/seminar/";
