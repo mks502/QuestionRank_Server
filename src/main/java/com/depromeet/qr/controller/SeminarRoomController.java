@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.depromeet.qr.dto.MemberAndCommentList;
 import com.depromeet.qr.dto.SeminarAdminDto;
+import com.depromeet.qr.dto.SeminarRoomDto;
 import com.depromeet.qr.entity.Comment;
 import com.depromeet.qr.entity.Member;
-import com.depromeet.qr.entity.SeminarRoom;
 import com.depromeet.qr.service.CommentService;
 import com.depromeet.qr.service.SeminarRoomService;
 
@@ -28,8 +28,8 @@ public class SeminarRoomController {
 	CommentService commentService;
 
 	@PostMapping("api/seminar")
-	public Member createSeminarRoom(@RequestBody SeminarRoom seminarRoom) throws MalformedURLException, IOException {
-		return seminarRoomService.createSeminar(seminarRoom);
+	public Member createSeminarRoom(@RequestBody SeminarRoomDto seminarRoomDto) throws MalformedURLException, IOException {
+		return seminarRoomService.createSeminar(seminarRoomDto);
 	}
 
 	@GetMapping("api/seminar/enter/{seminarid}/{mid}")
