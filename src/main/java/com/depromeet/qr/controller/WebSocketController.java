@@ -38,4 +38,5 @@ public class WebSocketController {
 	public boolean commentDelete(@DestinationVariable Long seminarid, CommentRequestDto commentRequestDto) {
 		return commentService.deleteCommentByAdmin(commentRequestDto.getCommentId(), commentRequestDto.getMid());
 	}
+	
 }

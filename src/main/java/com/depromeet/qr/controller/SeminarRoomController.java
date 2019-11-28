@@ -36,13 +36,15 @@ public class SeminarRoomController {
 	public MemberAndCommentList enterSeminarByMember(@PathVariable Long seminarid, @PathVariable Long mid) {
 		List<Comment> comments = commentService.getCommentsBySeminarRoom(seminarid);
 		Member member = seminarRoomService.enterSeminarByMember(seminarid, mid);
-		return MemberAndCommentList.builder().member(member).commentList(comments).build();
+		List<Comment> commentRankingList = commentService.getCommentRankListBySeminar(seminarid);
+		return MemberAndCommentList.builder().member(member).commentList(comments).commentRankingList(commentRankingList).build();
 	}
 
 	@GetMapping("api/seminar/enter/admin")
 	public MemberAndCommentList enterSeminarByAdmin(@ModelAttribute SeminarAdminDto seminarAdmin) {
 		List<Comment> comments = commentService.getCommentsBySeminarRoom(seminarAdmin.getSeminarId());
 		Member member = seminarRoomService.enterSeminarByAdmin(seminarAdmin.getSeminarId(), seminarAdmin.getPassword());
-		return MemberAndCommentList.builder().member(member).commentList(comments).build();
+		List<Comment> commentRankingList = commentService.getCommentRankListBySeminar(seminarAdmin.getSeminarId());
+		return MemberAndCommentList.builder().member(member).commentList(comments).commentRankingList(commentRankingList).build();
 	}
 }

@@ -13,4 +13,5 @@ import lombok.Data;
 public class MemberAndCommentList {
 	public Member member;
 	public List<Comment> commentList;
+	public List<Comment> commentRankingList;
 }

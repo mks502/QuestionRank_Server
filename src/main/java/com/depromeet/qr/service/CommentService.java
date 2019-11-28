@@ -41,7 +41,7 @@ public class CommentService {
 		Comment comment = Comment.builder().content(commentDto.getContent()).target(commentDto.getTarget()).likeCount(0)
 				.member(member).seminarRoom(seminar).build();
 		Comment newComment = commentRepository.save(comment);
-		return CommentResponseDto.builder().comment(newComment).type("comment").build();
+		return CommentResponseDto.builder().comment(newComment).type("COMMENT").build();
 	}
 
 	@Transactional
@@ -84,7 +84,7 @@ public class CommentService {
 		likeEntityRepository.save(like);
 		comment.setLikeCount(comment.getLikeCount()+1);
 		commentRepository.save(comment);
-		return CommentResponseDto.builder().comment(comment).type("like").build();
+		return CommentResponseDto.builder().comment(comment).type("LIKE").build();
 	}
 	
 	@Transactional
@@ -97,7 +97,7 @@ public class CommentService {
 		likeEntityRepository.delete(like);
 		comment.setLikeCount(comment.getLikeCount()-1);
 		commentRepository.save(comment);
-		return CommentResponseDto.builder().comment(comment).type("unlike").build();
+		return CommentResponseDto.builder().comment(comment).type("UNLIKE").build();
 	}
 	
 	@Transactional
@@ -108,5 +108,12 @@ public class CommentService {
 			throw new BadRequestException();
 		commentRepository.delete(comment);
 		return true;
+	}
+	
+	@Transactional
+	public List<Comment> getCommentRankListBySeminar(Long seminarId) {
+		SeminarRoom seminarRoom = seminarRoomService.findSeminar(seminarId);
+		List<Comment> commentRankingList = commentRepository.findTop3BySeminarRoomOrderByLikeCountDesc(seminarRoom);
+		return commentRankingList;
 	}
 }
