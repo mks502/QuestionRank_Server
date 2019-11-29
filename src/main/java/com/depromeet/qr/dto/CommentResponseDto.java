@@ -1,5 +1,7 @@
 package com.depromeet.qr.dto;
 
+import java.util.List;
+
 import com.depromeet.qr.entity.Comment;
 
 import lombok.Builder;
@@ -10,4 +12,5 @@ import lombok.Data;
 public class CommentResponseDto {
 	private String type;
 	private Comment comment;
+	private List<Comment> commentRankingList;
 }
