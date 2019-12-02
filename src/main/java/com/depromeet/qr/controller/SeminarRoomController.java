@@ -33,7 +33,7 @@ public class SeminarRoomController {
 	}
 
 	@GetMapping("api/seminar/enter/{seminarid}/{mid}")
-	public MemberAndCommentList enterSeminarByMember(@PathVariable Long seminarid, @PathVariable Long mid) {
+	public MemberAndCommentList enterSeminarByMember(@PathVariable Long seminarid, @PathVariable(required=false) Long mid) {
 		List<Comment> comments = commentService.getCommentsBySeminarRoom(seminarid);
 		Member member = seminarRoomService.enterSeminarByMember(seminarid, mid);
 		List<Comment> commentRankingList = commentService.getCommentRankListBySeminar(seminarid);

@@ -7,8 +7,6 @@ import lombok.Data;
 public class CommentDto {
 
 	private String content;
-	private String target;
-	private Long seminarId;
 	private Long mid;
 
 }
