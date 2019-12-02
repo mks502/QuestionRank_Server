@@ -63,15 +63,15 @@ public class CommentService {
 		commentRepository.deleteById(commentId);
 	}
 
-	@Transactional
-	public boolean deleteCommentsBySeminar(Long seminarId) {
-		SeminarRoom seminar = seminarRoomService.findSeminar(seminarId);
-		List<Comment> comments = commentRepository.findAllBySeminarRoom(seminar);
-		if (comments == null)
-			throw new NotFoundException();
-		commentRepository.deleteInBatch(comments);
-		return true;
-	}
+//	@Transactional
+//	public boolean deleteCommentsBySeminar(Long seminarId) {
+//		SeminarRoom seminar = seminarRoomService.findSeminar(seminarId);
+//		List<Comment> comments = commentRepository.findAllBySeminarRoom(seminar);
+//		if (comments == null)
+//			throw new NotFoundException();
+//		commentRepository.deleteInBatch(comments);
+//		return true;
+//	}
 
 	@Transactional
 	public List<SpeakerAndCommentList> getCommentsBySeminarRoom(Long seminarId) {
@@ -126,10 +126,10 @@ public class CommentService {
 		return true;
 	}
 
-	@Transactional
-	public List<Comment> getCommentRankListBySeminar(Long seminarId) {
-		SeminarRoom seminarRoom = seminarRoomService.findSeminar(seminarId);
-		List<Comment> commentRankingList = commentRepository.findTop3BySeminarRoomOrderByLikeCountDesc(seminarRoom);
-		return commentRankingList;
-	}
+//	@Transactional
+//	public List<Comment> getCommentRankListBySeminar(Long seminarId) {
+//		SeminarRoom seminarRoom = seminarRoomService.findSeminar(seminarId);
+//		List<Comment> commentRankingList = commentRepository.findTop3BySeminarRoomOrderByLikeCountDesc(seminarRoom);
+//		return commentRankingList;
+//	}
 }
