@@ -6,11 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.depromeet.qr.dto.MemberAndCommentList;
+import com.depromeet.qr.dto.SeminarAdminDto;
 import com.depromeet.qr.dto.SeminarCreateRequest;
+import com.depromeet.qr.dto.SpeakerAndCommentList;
 import com.depromeet.qr.dto.SpeakerDto;
 import com.depromeet.qr.entity.Member;
 import com.depromeet.qr.entity.Speaker;
@@ -39,19 +45,17 @@ public class SeminarRoomController {
 		return result;
 	}
 
-//	@GetMapping("api/seminar/enter/{seminarid}/{mid}")
-//	public MemberAndCommentList enterSeminarByMember(@PathVariable Long seminarid, @PathVariable(required=false) Long mid) {
-//		List<Comment> comments = commentService.getCommentsBySeminarRoom(seminarid);
-//		Member member = seminarRoomService.enterSeminarByMember(seminarid, mid);
-//		List<Comment> commentRankingList = commentService.getCommentRankListBySeminar(seminarid);
-//		return MemberAndCommentList.builder().member(member).commentList(comments).commentRankingList(commentRankingList).build();
-//	}
-//
-//	@GetMapping("api/seminar/enter/admin")
-//	public MemberAndCommentList enterSeminarByAdmin(@ModelAttribute SeminarAdminDto seminarAdmin) {
-//		List<Comment> comments = commentService.getCommentsBySeminarRoom(seminarAdmin.getSeminarId());
-//		Member member = seminarRoomService.enterSeminarByAdmin(seminarAdmin.getSeminarId(), seminarAdmin.getPassword());
-//		List<Comment> commentRankingList = commentService.getCommentRankListBySeminar(seminarAdmin.getSeminarId());
-//		return MemberAndCommentList.builder().member(member).commentList(comments).commentRankingList(commentRankingList).build();
-//	}
+	@GetMapping("api/seminar/enter/{seminarid}/{mid}")
+	public MemberAndCommentList enterSeminarByMember(@PathVariable Long seminarid, @PathVariable(name="mid",required=false) Long mid) {
+		List<SpeakerAndCommentList> comments = commentService.getCommentsBySeminarRoom(seminarid);
+		Member member = seminarRoomService.enterSeminarByMember(seminarid, mid);
+		return MemberAndCommentList.builder().member(member).commentListBySpeaker(comments).build();
+	}
+
+	@GetMapping("api/seminar/enter/admin")
+	public MemberAndCommentList enterSeminarByAdmin(@ModelAttribute SeminarAdminDto seminarAdmin) {
+		List<SpeakerAndCommentList> comments = commentService.getCommentsBySeminarRoom(seminarAdmin.getSeminarId());
+		Member member = seminarRoomService.enterSeminarByAdmin(seminarAdmin.getSeminarId(), seminarAdmin.getPassword());
+		return MemberAndCommentList.builder().member(member).commentListBySpeaker(comments).build();
+	}
 }

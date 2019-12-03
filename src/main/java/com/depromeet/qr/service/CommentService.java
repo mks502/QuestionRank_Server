@@ -126,10 +126,10 @@ public class CommentService {
 		return true;
 	}
 
-//	@Transactional
-//	public List<Comment> getCommentRankListBySeminar(Long seminarId) {
-//		SeminarRoom seminarRoom = seminarRoomService.findSeminar(seminarId);
-//		List<Comment> commentRankingList = commentRepository.findTop3BySeminarRoomOrderByLikeCountDesc(seminarRoom);
-//		return commentRankingList;
-//	}
+	@Transactional
+	public List<Comment> getCommentRankListBySpeaker(Long speakerId) {
+		Speaker speaker = speakerRepository.findById(speakerId).orElseThrow(()-> new NotFoundException("존재하지 않는 speakerId입니다"));
+		List<Comment> commentRankingList = commentRepository.findTop3BySpeakerOrderByLikeCountDesc(speaker);
+		return commentRankingList;
+	}
 }
