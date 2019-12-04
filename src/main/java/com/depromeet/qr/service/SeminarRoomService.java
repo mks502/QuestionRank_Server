@@ -38,14 +38,7 @@ public class SeminarRoomService {
 		SeminarRoom seminar = seminarRoomRepository.save(seminarRoomDto.toEntity());
 		Long seminarId = seminar.getSeminarId();
 		SeminarRoom newSeminar = seminarRoomRepository.findOneBySeminarId(seminarId);
-		String full = "/seminar/";
-		String seminarid = Long.toString(newSeminar.getSeminarId());
-		String longURL = QR_ADDR + "/mini_QR/";
-
-		full = full.concat(seminarid);
-		newSeminar.setFullURL(full);
-		longURL = longURL.concat(full);
-		newSeminar.setShortURL(createShortUrl(longURL));
+		newSeminar.setShortURL(createShortUrl(newSeminar.getFullURL()));
 		Member member = Member.builder().role("ADMIN").seminarRoom(seminarRoomRepository.save(newSeminar)).build();
 		return memberRepository.save(member);
 	}

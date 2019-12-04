@@ -4,11 +4,10 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class CommentDto {
+public class CommentCreateDto {
 
 	private String content;
-	private String target;
-	private Long seminarId;
 	private Long mid;
+	private Long speakerId;
 
 }
