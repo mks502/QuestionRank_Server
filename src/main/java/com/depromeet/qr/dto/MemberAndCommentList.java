@@ -12,6 +12,5 @@ import lombok.Data;
 @Builder
 public class MemberAndCommentList {
 	public Member member;
-	public List<Comment> commentList;
-	public List<Comment> commentRankingList;
+	public List<SpeakerAndCommentList> commentListBySpeaker;
 }

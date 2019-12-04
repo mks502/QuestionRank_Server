@@ -21,8 +21,8 @@ public class WebSocketService {
 		this.template = template;
 	}
 	
-	public void sendCommentRankingListBySeminar(Long seminarId) {
-		List<Comment> commentRankingList = commentService.getCommentRankListBySeminar(seminarId);
+	public void sendCommentRankingListBySpeaker(Long seminarId,Long speakerId) {
+		List<Comment> commentRankingList = commentService.getCommentRankListBySpeaker(speakerId);
 		this.template.convertAndSend("/subscribe/seminar/"+seminarId, commentRankingList);
 	}
 }
