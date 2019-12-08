@@ -20,7 +20,7 @@ public class WebSocketController {
 	WebSocketService webSocketService;
 
 	@MessageMapping("/comment/{seminarid}")
-	@SendTo("/seminar/{seminarid}")
+	@SendTo("subscribe/seminar/{seminarid}")
 	public CommentResponseDto commentMessage(@DestinationVariable Long seminarid, CommentCreateDto commentDto) {
 		CommentResponseDto response = commentService.createComment(commentDto,seminarid);
 		response.setCommentRankingList(commentService.getCommentRankListBySpeaker(commentDto.getSpeakerId()));
@@ -28,7 +28,7 @@ public class WebSocketController {
 	}
 
 	@MessageMapping("/comment/{seminarid}/like")
-	@SendTo("/seminar/{seminarid}")
+	@SendTo("subscribe/seminar/{seminarid}")
 	public CommentResponseDto commentLike(@DestinationVariable Long seminarid, CommentRequestDto commentRequestDto) {
 		CommentResponseDto response = commentService.upLikeCount(commentRequestDto.getCommentId(), commentRequestDto.getMid());
 		response.setCommentRankingList(commentService.getCommentRankListBySpeaker(commentRequestDto.getSpeakerId()));
@@ -36,7 +36,7 @@ public class WebSocketController {
 	}
 
 	@MessageMapping("/comment/{seminarid}/unlike")
-	@SendTo("/seminar/{seminarid}")
+	@SendTo("subscribe/seminar/{seminarid}")
 	public CommentResponseDto commentUnLike(@DestinationVariable Long seminarid, CommentRequestDto commentRequestDto) {
 		CommentResponseDto response = commentService.downLikeCount(commentRequestDto.getCommentId(), commentRequestDto.getMid());
 		response.setCommentRankingList(commentService.getCommentRankListBySpeaker(commentRequestDto.getSpeakerId()));
@@ -44,7 +44,7 @@ public class WebSocketController {
 	}
 
 	@MessageMapping("/comment/{seminarid}/delete")
-	@SendTo("/seminar/{seminarid}")
+	@SendTo("subscribe/seminar/{seminarid}")
 	public boolean commentDelete(@DestinationVariable Long seminarid, CommentRequestDto commentRequestDto) {
 		webSocketService.sendCommentRankingListBySpeaker(seminarid, commentRequestDto.getSpeakerId());
 		return commentService.deleteCommentByAdmin(commentRequestDto.getCommentId(), commentRequestDto.getMid());

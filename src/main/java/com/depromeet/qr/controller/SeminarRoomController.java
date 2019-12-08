@@ -24,6 +24,8 @@ import com.depromeet.qr.service.CommentService;
 import com.depromeet.qr.service.SeminarRoomService;
 import com.depromeet.qr.service.SpeakerService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 public class SeminarRoomController {
 	@Autowired
@@ -33,6 +35,7 @@ public class SeminarRoomController {
 	@Autowired
 	CommentService commentService;
 
+	@ApiOperation(value="방 만들기")
 	@PostMapping("api/seminar")
 	public List<Speaker> createSeminarRoom(@RequestBody SeminarCreateRequest request) throws MalformedURLException, IOException {
 		Member admin = seminarRoomService.createSeminar(request.getSeminarRoomDto());
@@ -52,6 +55,7 @@ public class SeminarRoomController {
 		return MemberAndCommentList.builder().member(member).commentListBySpeaker(comments).build();
 	}
 
+	@ApiOperation(value="방 번호와 비밀번호를 통한 admin 입장")
 	@GetMapping("api/seminar/enter/admin")
 	public MemberAndCommentList enterSeminarByAdmin(@ModelAttribute SeminarAdminDto seminarAdmin) {
 		List<SpeakerAndCommentList> comments = commentService.getCommentsBySeminarRoom(seminarAdmin.getSeminarId());
