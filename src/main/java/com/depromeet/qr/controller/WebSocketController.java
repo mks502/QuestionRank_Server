@@ -45,8 +45,9 @@ public class WebSocketController {
 
 	@MessageMapping("/comment/{seminarid}/delete")
 	@SendTo("/subscribe/seminar/{seminarid}")
-	public boolean commentDelete(@DestinationVariable Long seminarid, CommentRequestDto commentRequestDto) {
-		webSocketService.sendCommentRankingListBySpeaker(seminarid, commentRequestDto.getSpeakerId());
-		return commentService.deleteCommentByAdmin(commentRequestDto.getCommentId(), commentRequestDto.getMid());
+	public CommentResponseDto commentDelete(@DestinationVariable Long seminarid, CommentRequestDto commentRequestDto) {
+		CommentResponseDto response = commentService.deleteCommentByAdmin(commentRequestDto.getCommentId(), commentRequestDto.getMid());
+		response.setCommentRankingList(commentService.getCommentRankListBySpeaker(commentRequestDto.getSpeakerId()));
+		return response;
 	}
 }
