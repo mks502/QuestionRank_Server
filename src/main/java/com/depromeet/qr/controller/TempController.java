@@ -34,7 +34,9 @@ public class TempController {
 		return response;
 	}
 	@PostMapping("/comment/{seminarid}/delete")
-	public boolean commentDelete(@PathVariable Long seminarid, CommentRequestDto commentRequestDto) {
-		return commentService.deleteCommentByAdmin(commentRequestDto.getCommentId(), commentRequestDto.getMid());
+	public CommentResponseDto commentDelete(@PathVariable Long seminarid, CommentRequestDto commentRequestDto) {
+		CommentResponseDto response = commentService.deleteCommentByAdmin(commentRequestDto.getCommentId(), commentRequestDto.getMid());
+		response.setCommentRankingList(commentService.getCommentRankListBySpeaker(commentRequestDto.getSpeakerId()));
+		return response;
 	}
 }

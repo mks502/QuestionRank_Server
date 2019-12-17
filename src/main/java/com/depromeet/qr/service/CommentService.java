@@ -61,16 +61,6 @@ public class CommentService {
 		commentRepository.deleteById(commentId);
 	}
 
-//	@Transactional
-//	public boolean deleteCommentsBySeminar(Long seminarId) {
-//		SeminarRoom seminar = seminarRoomService.findSeminar(seminarId);
-//		List<Comment> comments = commentRepository.findAllBySeminarRoom(seminar);
-//		if (comments == null)
-//			throw new NotFoundException();
-//		commentRepository.deleteInBatch(comments);
-//		return true;
-//	}
-
 	@Transactional
 	public List<SpeakerAndCommentList> getCommentsBySeminarRoom(Long seminarId) {
 		List<SpeakerAndCommentList> result = new ArrayList<SpeakerAndCommentList>();
@@ -115,13 +105,13 @@ public class CommentService {
 	}
 
 	@Transactional
-	public boolean deleteCommentByAdmin(Long commentId, Long memberId) {
+	public CommentResponseDto deleteCommentByAdmin(Long commentId, Long memberId) {
 		Comment comment = getComment(commentId);
 		Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException());
-		if (member.getRole() != "Admin")
+		if (member.getRole() != "ADMIN")
 			throw new BadRequestException();
 		commentRepository.delete(comment);
-		return true;
+		return CommentResponseDto.builder().comment(comment).type("DELETE").build();
 	}
 
 	@Transactional
