@@ -19,6 +19,7 @@ import com.depromeet.qr.dto.SeminarCreateRequest;
 import com.depromeet.qr.dto.SpeakerAndCommentList;
 import com.depromeet.qr.dto.SpeakerDto;
 import com.depromeet.qr.entity.Member;
+import com.depromeet.qr.entity.SeminarRoom;
 import com.depromeet.qr.entity.Speaker;
 import com.depromeet.qr.service.CommentService;
 import com.depromeet.qr.service.SeminarRoomService;
@@ -62,4 +63,11 @@ public class SeminarRoomController {
 		Member member = seminarRoomService.enterSeminarByAdmin(seminarAdmin.getSeminarId(), seminarAdmin.getPassword());
 		return MemberAndCommentList.builder().member(member).commentListBySpeaker(comments).build();
 	}
+	
+	@ApiOperation(value="seminarId를 통한 방조회")
+	@GetMapping("api/seminar/room/{seminarid}")
+	public SeminarRoom getSeminarRoom (@PathVariable Long seminarid) {
+		return seminarRoomService.findSeminar(seminarid);
+	}
+	
 }
