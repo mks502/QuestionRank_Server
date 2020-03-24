@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.depromeet.qr.entity.Member;
 import com.depromeet.qr.entity.SeminarRoom;
+import com.depromeet.qr.exception.BadRequestException;
 import com.depromeet.qr.exception.NotFoundException;
 import com.depromeet.qr.repository.MemberRepository;
 import com.depromeet.qr.repository.SeminarRoomRepository;
@@ -51,11 +52,16 @@ public class MemberService {
 	}
 
 	@Transactional
-	public boolean deleteMembersBySeminarRoom(Long seminarId) {
+	public void deleteMembersBySeminarRoom(Long seminarId) {
 		List<Member> members = getMembersBySeminarRoom(seminarId);
-		if (members == null)
-			return false;
 		memberRepository.deleteInBatch(members);
+	}
+	
+	@Transactional
+	public boolean checkRoleAdmin(Long memberId) {
+		Member member = getMember(memberId);
+		if(member.getRole()=="ADMIN")
+			new BadRequestException("ADMIN이 아닙니다");
 		return true;
 	}
 }

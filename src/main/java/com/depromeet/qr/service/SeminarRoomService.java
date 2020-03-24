@@ -29,6 +29,8 @@ public class SeminarRoomService {
 	SeminarRoomRepository seminarRoomRepository;
 	@Autowired
 	MemberRepository memberRepository;
+	@Autowired
+	MemberService memberService;
 
 	@Value("${qr.addr}")
 	private String QR_ADDR;
@@ -80,4 +82,10 @@ public class SeminarRoomService {
 		Member member = memberRepository.findOneBySeminarRoomAndRole(seminar, "ADMIN");
 		return member;
 	}
+	
+//	@Transactional
+//	public Member updateSeminarRoom(Long seminarId, Long memberId, SeminarRoomDto seminar) {
+//		memberService.checkRoleAdmin(memberId);
+//		SeminarRoom seminarRoom = findSeminar(seminarId);
+//	}
 }

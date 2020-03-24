@@ -37,9 +37,9 @@ public class MemberController {
 		return ResponseEntity.ok().body(members);
 	}
 	@DeleteMapping("api/members/{seminarId}")
-	public ResponseEntity<Boolean> deleteMembersBySeminarId(@PathVariable Long seminarId) {
-		if(memberService.deleteMembersBySeminarRoom(seminarId))
-			return ResponseEntity.ok().body(true);
-		return ResponseEntity.badRequest().body(false);
+	public ResponseEntity deleteMembersBySeminarId(@PathVariable Long seminarId) {
+		memberService.deleteMembersBySeminarRoom(seminarId);
+		return ResponseEntity.accepted().build();
 	}
+
 }
