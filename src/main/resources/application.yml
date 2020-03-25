@@ -8,9 +8,10 @@ logging:
 
 spring:
   profiles:
-    active: dev
+    active: prod
 
 ---
+
 
 spring:
   profiles: dev
@@ -25,11 +26,12 @@ spring:
   h2:
     console:
       enabled: true
-
+environments:
+  url: http://localhost:8080
 
 server:
   port: 8080
-
+  
 ---
 
 spring:
@@ -37,6 +39,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+      use-new-id-generator-mappings: false
   datasource:
     url: jdbc:mariadb://localhost:3306/qr?useUnicode=true&characterEncoding=utf8
     username: root
@@ -44,6 +47,9 @@ spring:
   h2:
     console:
       enabled: true
+      
+environments:
+  url: http://localhost:3000
 
 
 server:

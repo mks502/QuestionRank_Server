@@ -23,7 +23,6 @@ import com.depromeet.qr.repository.SeminarRoomRepository;
 import com.rosaloves.bitlyj.Url;
 
 @Service
-@PropertySource("classpath:/com/depromeet/qr/config/config.properties")
 public class SeminarRoomService {
 	@Autowired
 	SeminarRoomRepository seminarRoomRepository;
@@ -31,9 +30,9 @@ public class SeminarRoomService {
 	MemberRepository memberRepository;
 	@Autowired
 	MemberService memberService;
-
-	@Value("${qr.addr}")
-	private String QR_ADDR;
+	
+	@Value("${environments.url}")
+	private String ADDR;
 
 	@Transactional
 	public Member createSeminar(SeminarRoomDto seminarRoomDto) throws MalformedURLException, IOException {
