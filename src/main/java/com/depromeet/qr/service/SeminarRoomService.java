@@ -39,6 +39,8 @@ public class SeminarRoomService {
 		SeminarRoom seminar = seminarRoomRepository.save(seminarRoomDto.toEntity());
 		Long seminarId = seminar.getSeminarId();
 		SeminarRoom newSeminar = seminarRoomRepository.findOneBySeminarId(seminarId);
+		newSeminar.setFullURL(ADDR+"/"+seminarId);
+		System.out.println(newSeminar.getFullURL());
 		newSeminar.setShortURL(createShortUrl(newSeminar.getFullURL()));
 		Member member = Member.builder().role("ADMIN").seminarRoom(seminarRoomRepository.save(newSeminar)).build();
 		return memberRepository.save(member);

@@ -27,7 +27,7 @@ spring:
     console:
       enabled: true
 environments:
-  url: http://localhost:8080
+  url: http://lvh.me:8080
 
 server:
   port: 8080
@@ -49,7 +49,7 @@ spring:
       enabled: true
       
 environments:
-  url: http://localhost:3000
+  url: http://lvh.me:3000
 
 
 server:
