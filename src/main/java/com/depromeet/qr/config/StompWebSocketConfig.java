@@ -19,5 +19,4 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/q-rank-websock").setAllowedOrigins("*").withSockJS();
 	}
-
 }
