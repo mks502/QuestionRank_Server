@@ -5,9 +5,12 @@ import static com.rosaloves.bitlyj.Bitly.shorten;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.time.LocalDateTime;
 
 import javax.transaction.Transactional;
 
+import com.depromeet.qr.util.UtilEncoder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -23,19 +26,21 @@ import com.depromeet.qr.repository.SeminarRoomRepository;
 import com.rosaloves.bitlyj.Url;
 
 @Service
+@RequiredArgsConstructor
 public class SeminarRoomService {
-	@Autowired
-	SeminarRoomRepository seminarRoomRepository;
-	@Autowired
-	MemberRepository memberRepository;
-	@Autowired
-	MemberService memberService;
+
+	private final SeminarRoomRepository seminarRoomRepository;
+	private final MemberRepository memberRepository;
+	private final MemberService memberService;
+	private final UtilEncoder utilEncoder;
 	
 	@Value("${environments.url}")
 	private String ADDR;
 
 	@Transactional
 	public Member createSeminar(SeminarRoomDto seminarRoomDto) throws MalformedURLException, IOException {
+		String password = utilEncoder.encoding(LocalDateTime.now().toString()+seminarRoomDto.getSeminarTitle());
+		seminarRoomDto.setSeminarPassword(password);
 		SeminarRoom seminar = seminarRoomRepository.save(seminarRoomDto.toEntity());
 		Long seminarId = seminar.getSeminarId();
 		SeminarRoom newSeminar = seminarRoomRepository.findOneBySeminarId(seminarId);

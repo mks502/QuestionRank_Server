@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,25 +27,26 @@ import com.depromeet.qr.repository.SeminarRoomRepository;
 import com.depromeet.qr.repository.SpeakerRepository;
 
 @Service
+@RequiredArgsConstructor
 public class CommentService {
-	@Autowired
-	CommentRepository commentRepository;
-	@Autowired
-	SeminarRoomRepository seminarRoomRepository;
-	@Autowired
-	MemberRepository memberRepository;
-	@Autowired
-	LikeEntityRepository likeEntityRepository;
-	@Autowired
-	SpeakerRepository speakerRepository;
-	@Autowired
-	SeminarRoomService seminarRoomService;
+
+	private final CommentRepository commentRepository;
+
+	private final SeminarRoomRepository seminarRoomRepository;
+
+	private final MemberRepository memberRepository;
+
+	private final LikeEntityRepository likeEntityRepository;
+
+	private final SpeakerRepository speakerRepository;
+
+	private final SeminarRoomService seminarRoomService;
 
 	@Transactional
-	public CommentResponseDto createComment(CommentCreateDto commentDto,Long seminarId) {
+	public CommentResponseDto createComment(CommentCreateDto commentDto, Long seminarId) {
 		SeminarRoom seminar = seminarRoomService.findSeminar(seminarId);
 		Member member = memberRepository.findById(commentDto.getMid()).orElseThrow(() -> new NotFoundException());
-		Speaker speaker = speakerRepository.findById(commentDto.getSpeakerId()).orElseThrow(()->new NotFoundException("존재하지 않는 스피커입니다"));
+		Speaker speaker = speakerRepository.findById(commentDto.getSpeakerId()).orElseThrow(() -> new NotFoundException("존재하지 않는 스피커입니다"));
 		Comment comment = Comment.builder().content(commentDto.getContent()).speaker(speaker).likeCount(0)
 				.member(member).build();
 		Comment newComment = commentRepository.save(comment);
@@ -116,7 +118,7 @@ public class CommentService {
 
 	@Transactional
 	public List<Comment> getCommentRankListBySpeaker(Long speakerId) {
-		Speaker speaker = speakerRepository.findById(speakerId).orElseThrow(()-> new NotFoundException("존재하지 않는 speakerId입니다"));
+		Speaker speaker = speakerRepository.findById(speakerId).orElseThrow(() -> new NotFoundException("존재하지 않는 speakerId입니다"));
 		List<Comment> commentRankingList = commentRepository.findTop3BySpeakerOrderByLikeCountDesc(speaker);
 		return commentRankingList;
 	}

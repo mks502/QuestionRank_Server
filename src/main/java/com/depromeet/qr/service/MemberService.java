@@ -4,7 +4,12 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import com.depromeet.qr.adapter.KakaoAdapter;
+import com.depromeet.qr.dto.KakaoUserDto;
+import com.depromeet.qr.exception.ApiFailedException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.depromeet.qr.entity.Member;
@@ -13,13 +18,35 @@ import com.depromeet.qr.exception.BadRequestException;
 import com.depromeet.qr.exception.NotFoundException;
 import com.depromeet.qr.repository.MemberRepository;
 import com.depromeet.qr.repository.SeminarRoomRepository;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
+@RequiredArgsConstructor
 public class MemberService {
-	@Autowired
-	MemberRepository memberRepository;
-	@Autowired
-	SeminarRoomRepository seminarRoomRepository;
+	private final MemberRepository memberRepository;
+	private final SeminarRoomRepository seminarRoomRepository;
+	private final KakaoAdapter kakaoAdapter;
+
+
+	@Transactional
+	public Member getOrCreateMember(String kakaoToken) {
+		final KakaoUserDto kakaoUserDto = kakaoAdapter.getUserInfo(kakaoToken);
+		if (kakaoUserDto == null) {
+			throw new ApiFailedException("Failed to get user info from kakao api", HttpStatus.SERVICE_UNAVAILABLE);
+		}
+		final String kakaoId = kakaoUserDto.getId().toString();
+		final String profileImgUrl = kakaoUserDto.getProfileImage();
+		final String name = kakaoUserDto.getUserName();
+		return memberRepository.findOneByKakaoId(kakaoId)
+				.orElseGet(() -> {    //해당 카카오id가 우리 서버에 존재 하지않으면 회원 등록
+					System.out.println("새로운 유저 등록!");
+					final Member member = new Member();
+					member.setKakaoId(kakaoId);
+					member.setProfileImgUrl(profileImgUrl);
+					member.setName(name);
+					return memberRepository.save(member);
+				});
+	}
 
 	@Transactional
 	public Member createMember(Long seminarId) {

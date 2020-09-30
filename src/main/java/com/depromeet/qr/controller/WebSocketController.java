@@ -1,5 +1,6 @@
 package com.depromeet.qr.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -13,11 +14,12 @@ import com.depromeet.qr.service.CommentService;
 import com.depromeet.qr.service.WebSocketService;
 
 @Controller
+@RequiredArgsConstructor
 public class WebSocketController {
-	@Autowired
-	CommentService commentService;
-	@Autowired
-	WebSocketService webSocketService;
+
+	private final CommentService commentService;
+
+	private final WebSocketService webSocketService;
 
 	@MessageMapping("/comment/{seminarid}")
 	@SendTo("/subscribe/seminar/{seminarid}")

@@ -1,5 +1,6 @@
 package com.depromeet.qr.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,9 +12,10 @@ import com.depromeet.qr.dto.CommentResponseDto;
 import com.depromeet.qr.service.CommentService;
 
 @RestController
+@RequiredArgsConstructor
 public class TempController {
-	@Autowired
-	CommentService commentService;
+
+	private final CommentService commentService;
 	
 	@PostMapping("/comment/{seminarid}")
 	public CommentResponseDto commentMessage(@PathVariable Long seminarid, CommentCreateDto commentDto) {

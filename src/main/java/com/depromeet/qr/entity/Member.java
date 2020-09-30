@@ -13,7 +13,7 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class Member extends BaseEntity {
@@ -22,6 +22,10 @@ public class Member extends BaseEntity {
 	private Long mid;
 	@Builder.Default
 	private String role="USER";
+
+	private String kakaoId;
+	private String name;
+	private String profileImgUrl;
 
 	@ManyToOne
 	@JoinColumn(name = "seminarId")

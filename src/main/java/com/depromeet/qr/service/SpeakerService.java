@@ -2,6 +2,7 @@ package com.depromeet.qr.service;
 
 import javax.transaction.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +12,11 @@ import com.depromeet.qr.entity.Speaker;
 import com.depromeet.qr.repository.SpeakerRepository;
 
 @Service
+@RequiredArgsConstructor
 public class SpeakerService {
-	@Autowired
-	SpeakerRepository speakerRepository;
-	@Autowired
-	SeminarRoomService seminarRoomService;
+
+	private final SpeakerRepository speakerRepository;
+	private final SeminarRoomService seminarRoomService;
 	
 	@Transactional
 	public Speaker createSpeaker(SpeakerDto speakerDto) {

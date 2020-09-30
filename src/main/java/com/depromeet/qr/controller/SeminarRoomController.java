@@ -2,9 +2,12 @@ package com.depromeet.qr.controller;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.depromeet.qr.util.UtilEncoder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,16 +31,17 @@ import com.depromeet.qr.service.SpeakerService;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
+@RequiredArgsConstructor
 public class SeminarRoomController {
-	@Autowired
-	SeminarRoomService seminarRoomService;
-	@Autowired
-	SpeakerService speakerService;
-	@Autowired
-	CommentService commentService;
+
+	private final SeminarRoomService seminarRoomService;
+
+	private final SpeakerService speakerService;
+
+	private final CommentService commentService;
 
 	@ApiOperation(value="방 만들기")
-	@PostMapping("api/seminar")
+	@PostMapping("/api/seminar")
 	public List<Speaker> createSeminarRoom(@RequestBody SeminarCreateRequest request) throws MalformedURLException, IOException {
 		Member admin = seminarRoomService.createSeminar(request.getSeminarRoomDto());
 		List<Speaker> result = new ArrayList<Speaker>();
@@ -49,7 +53,7 @@ public class SeminarRoomController {
 		return result;
 	}
 
-	@GetMapping("api/seminar/enter/{seminarid}/{mid}")
+	@GetMapping("/api/seminar/enter/{seminarid}/{mid}")
 	public MemberAndCommentList enterSeminarByMember(@PathVariable Long seminarid, @PathVariable(name="mid",required=false) Long mid) {
 		List<SpeakerAndCommentList> comments = commentService.getCommentsBySeminarRoom(seminarid);
 		Member member = seminarRoomService.enterSeminarByMember(seminarid, mid);
@@ -57,7 +61,7 @@ public class SeminarRoomController {
 	}
 
 	@ApiOperation(value="방 번호와 비밀번호를 통한 admin 입장")
-	@GetMapping("api/seminar/enter/admin")
+	@GetMapping("/api/seminar/enter/admin")
 	public MemberAndCommentList enterSeminarByAdmin(@ModelAttribute SeminarAdminDto seminarAdmin) {
 		List<SpeakerAndCommentList> comments = commentService.getCommentsBySeminarRoom(seminarAdmin.getSeminarId());
 		Member member = seminarRoomService.enterSeminarByAdmin(seminarAdmin.getSeminarId(), seminarAdmin.getPassword());
@@ -65,7 +69,7 @@ public class SeminarRoomController {
 	}
 	
 	@ApiOperation(value="seminarId를 통한 방조회")
-	@GetMapping("api/seminar/room/{seminarid}")
+	@GetMapping("/api/seminar/room/{seminarid}")
 	public SeminarRoom getSeminarRoom (@PathVariable Long seminarid) {
 		return seminarRoomService.findSeminar(seminarid);
 	}
