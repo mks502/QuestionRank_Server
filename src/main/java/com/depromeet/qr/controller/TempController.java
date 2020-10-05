@@ -1,7 +1,6 @@
 package com.depromeet.qr.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,19 +24,19 @@ public class TempController {
 	}
 	@PostMapping("/comment/{seminarid}/like")
 	public CommentResponseDto commentLike(@PathVariable Long seminarid, CommentRequestDto commentRequestDto) {
-		CommentResponseDto response = commentService.upLikeCount(commentRequestDto.getCommentId(), commentRequestDto.getMid());
+		CommentResponseDto response = commentService.upLikeCount(commentRequestDto.getCommentId(), commentRequestDto.getMemberId());
 		response.setCommentRankingList(commentService.getCommentRankListBySpeaker(commentRequestDto.getSpeakerId()));
 		return response;
 	}
 	@PostMapping("/comment/{seminarid}/unlike")
 	public CommentResponseDto commentUnLike(@PathVariable Long seminarid, CommentRequestDto commentRequestDto) {
-		CommentResponseDto response = commentService.downLikeCount(commentRequestDto.getCommentId(), commentRequestDto.getMid());
+		CommentResponseDto response = commentService.downLikeCount(commentRequestDto.getCommentId(), commentRequestDto.getMemberId());
 		response.setCommentRankingList(commentService.getCommentRankListBySpeaker(commentRequestDto.getSpeakerId()));
 		return response;
 	}
 	@PostMapping("/comment/{seminarid}/delete")
 	public CommentResponseDto commentDelete(@PathVariable Long seminarid, CommentRequestDto commentRequestDto) {
-		CommentResponseDto response = commentService.deleteCommentByAdmin(commentRequestDto.getCommentId(), commentRequestDto.getMid());
+		CommentResponseDto response = commentService.deleteCommentByAdmin(commentRequestDto.getCommentId(), commentRequestDto.getMemberId());
 		response.setCommentRankingList(commentService.getCommentRankListBySpeaker(commentRequestDto.getSpeakerId()));
 		return response;
 	}

@@ -10,4 +10,5 @@ import lombok.Data;
 public class SeminarCreateRequest {
 	public SeminarRoomDto seminarRoomDto;
 	public List<SpeakerDto> speakerList;
+	public Long memberId;
 }

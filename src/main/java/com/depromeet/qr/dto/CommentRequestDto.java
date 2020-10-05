@@ -6,5 +6,5 @@ import lombok.Data;
 public class CommentRequestDto {
 	private Long speakerId;
 	private Long commentId;
-	private Long mid;
+	private Long memberId;
 }

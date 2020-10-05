@@ -7,7 +7,7 @@ import lombok.Data;
 public class CommentCreateDto {
 
 	private String content;
-	private Long mid;
+	private Long memberId;
 	private Long speakerId;
 
 }

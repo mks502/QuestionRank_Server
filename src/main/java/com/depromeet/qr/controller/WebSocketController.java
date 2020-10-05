@@ -1,7 +1,6 @@
 package com.depromeet.qr.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -32,7 +31,7 @@ public class WebSocketController {
 	@MessageMapping("/comment/{seminarid}/like")
 	@SendTo("/subscribe/seminar/{seminarid}")
 	public CommentResponseDto commentLike(@DestinationVariable Long seminarid, CommentRequestDto commentRequestDto) {
-		CommentResponseDto response = commentService.upLikeCount(commentRequestDto.getCommentId(), commentRequestDto.getMid());
+		CommentResponseDto response = commentService.upLikeCount(commentRequestDto.getCommentId(), commentRequestDto.getMemberId());
 		response.setCommentRankingList(commentService.getCommentRankListBySpeaker(commentRequestDto.getSpeakerId()));
 		return response;
 	}
@@ -40,7 +39,7 @@ public class WebSocketController {
 	@MessageMapping("/comment/{seminarid}/unlike")
 	@SendTo("/subscribe/seminar/{seminarid}")
 	public CommentResponseDto commentUnLike(@DestinationVariable Long seminarid, CommentRequestDto commentRequestDto) {
-		CommentResponseDto response = commentService.downLikeCount(commentRequestDto.getCommentId(), commentRequestDto.getMid());
+		CommentResponseDto response = commentService.downLikeCount(commentRequestDto.getCommentId(), commentRequestDto.getMemberId());
 		response.setCommentRankingList(commentService.getCommentRankListBySpeaker(commentRequestDto.getSpeakerId()));
 		return response;
 	}
@@ -48,7 +47,7 @@ public class WebSocketController {
 	@MessageMapping("/comment/{seminarid}/delete")
 	@SendTo("/subscribe/seminar/{seminarid}")
 	public CommentResponseDto commentDelete(@DestinationVariable Long seminarid, CommentRequestDto commentRequestDto) {
-		CommentResponseDto response = commentService.deleteCommentByAdmin(commentRequestDto.getCommentId(), commentRequestDto.getMid());
+		CommentResponseDto response = commentService.deleteCommentByAdmin(commentRequestDto.getCommentId(), commentRequestDto.getMemberId());
 		response.setCommentRankingList(commentService.getCommentRankListBySpeaker(commentRequestDto.getSpeakerId()));
 		return response;
 	}

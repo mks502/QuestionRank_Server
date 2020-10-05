@@ -6,13 +6,11 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.depromeet.qr.dto.CommentCreateDto;
 import com.depromeet.qr.dto.CommentResponseDto;
 import com.depromeet.qr.dto.SpeakerAndCommentList;
-import com.depromeet.qr.dto.SpeakerDto;
 import com.depromeet.qr.entity.Comment;
 import com.depromeet.qr.entity.LikeEntity;
 import com.depromeet.qr.entity.Member;
@@ -45,7 +43,7 @@ public class CommentService {
 	@Transactional
 	public CommentResponseDto createComment(CommentCreateDto commentDto, Long seminarId) {
 		SeminarRoom seminar = seminarRoomService.findSeminar(seminarId);
-		Member member = memberRepository.findById(commentDto.getMid()).orElseThrow(() -> new NotFoundException());
+		Member member = memberRepository.findById(commentDto.getMemberId()).orElseThrow(() -> new NotFoundException());
 		Speaker speaker = speakerRepository.findById(commentDto.getSpeakerId()).orElseThrow(() -> new NotFoundException("존재하지 않는 스피커입니다"));
 		Comment comment = Comment.builder().content(commentDto.getContent()).speaker(speaker).likeCount(0)
 				.member(member).build();

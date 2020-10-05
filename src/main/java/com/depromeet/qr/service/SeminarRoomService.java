@@ -11,9 +11,7 @@ import javax.transaction.Transactional;
 
 import com.depromeet.qr.util.UtilEncoder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import com.depromeet.qr.dto.SeminarRoomDto;
@@ -31,24 +29,23 @@ public class SeminarRoomService {
 
 	private final SeminarRoomRepository seminarRoomRepository;
 	private final MemberRepository memberRepository;
-	private final MemberService memberService;
 	private final UtilEncoder utilEncoder;
 	
 	@Value("${environments.url}")
 	private String ADDR;
 
 	@Transactional
-	public Member createSeminar(SeminarRoomDto seminarRoomDto) throws MalformedURLException, IOException {
+	public SeminarRoom createSeminar(SeminarRoomDto seminarRoomDto) throws MalformedURLException, IOException {
 		String password = utilEncoder.encoding(LocalDateTime.now().toString()+seminarRoomDto.getSeminarTitle());
 		seminarRoomDto.setSeminarPassword(password);
 		SeminarRoom seminar = seminarRoomRepository.save(seminarRoomDto.toEntity());
 		Long seminarId = seminar.getSeminarId();
-		SeminarRoom newSeminar = seminarRoomRepository.findOneBySeminarId(seminarId);
+		SeminarRoom newSeminar = findSeminar(seminarId);
 		newSeminar.setFullURL(ADDR+"/"+seminarId);
 		System.out.println(newSeminar.getFullURL());
 		newSeminar.setShortURL(createShortUrl(newSeminar.getFullURL()));
-		Member member = Member.builder().role("ADMIN").seminarRoom(seminarRoomRepository.save(newSeminar)).build();
-		return memberRepository.save(member);
+
+		return seminarRoomRepository.save(newSeminar);
 	}
 
 	// bit.ly api를 사용하여 fullUrl을 shortUrl로 변환
@@ -62,17 +59,14 @@ public class SeminarRoomService {
 	}
 
 	public SeminarRoom findSeminar(Long seminarId) {
-		SeminarRoom seminarRoom = seminarRoomRepository.findOneBySeminarId(seminarId);
-		if (seminarRoom == null)
-			throw new NotFoundException("Not Found SeminarRoom");
+		SeminarRoom seminarRoom = seminarRoomRepository.findOneBySeminarId(seminarId).orElseThrow(()-> new NotFoundException("Not Found SeminarRoom"));
 		return seminarRoom;
 	}
 
 	@Transactional
 	public Member enterSeminarByMember(Long seminarId, Long mid) {
 		SeminarRoom seminar = findSeminar(seminarId);
-
-		Member member = memberRepository.findOneBySeminarRoomAndMid(seminar, mid);
+		Member member = memberRepository.findOneBySeminarRoomAndMemberId(seminar, mid);
 		if (member == null) {
 			member = Member.builder().role("USER").seminarRoom(seminar).build();
 			member = memberRepository.save(member);

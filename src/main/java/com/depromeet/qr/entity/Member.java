@@ -19,7 +19,7 @@ import lombok.*;
 public class Member extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long mid;
+	private Long memberId;
 	@Builder.Default
 	private String role="USER";
 

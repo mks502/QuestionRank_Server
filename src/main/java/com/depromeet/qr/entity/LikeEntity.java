@@ -25,7 +25,7 @@ public class LikeEntity extends BaseEntity {
 	@JoinColumn(name = "commentId")
 	private Comment comment;
 	@OneToOne
-	@JoinColumn(name = "mid")
+	@JoinColumn(name = "member_id")
 	private Member member;
 
 }

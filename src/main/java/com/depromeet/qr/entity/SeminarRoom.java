@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import com.depromeet.qr.base.BaseEntity;
+import com.depromeet.qr.dto.SeminarCreateResponse;
 import lombok.*;
 
 @Entity
@@ -27,4 +28,9 @@ public class SeminarRoom extends BaseEntity {
 	private String shortURL;
 	private String seminarPassword;
 
+	public SeminarCreateResponse toResponse(){
+		return SeminarCreateResponse.builder()
+				.seminarId(this.seminarId).seminarPassword(this.seminarPassword).seminarTitle(this.seminarTitle).fullURL(this.fullURL)
+				.shortURL(this.shortURL).build();
+	}
 }

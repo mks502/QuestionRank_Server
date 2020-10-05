@@ -35,7 +35,7 @@ public class Comment extends BaseEntity {
 	private Integer likeCount = 0;
 	
 	@OneToOne
-	@JoinColumn(name = "mid")
+	@JoinColumn(name = "member_id")
 	private Member member;
 
 }

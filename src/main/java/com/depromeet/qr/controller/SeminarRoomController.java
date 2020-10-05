@@ -6,6 +6,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.depromeet.qr.constant.AccessionRole;
+import com.depromeet.qr.dto.*;
+import com.depromeet.qr.exception.BadRequestException;
+import com.depromeet.qr.service.*;
 import com.depromeet.qr.util.UtilEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.depromeet.qr.dto.MemberAndCommentList;
-import com.depromeet.qr.dto.SeminarAdminDto;
-import com.depromeet.qr.dto.SeminarCreateRequest;
-import com.depromeet.qr.dto.SpeakerAndCommentList;
-import com.depromeet.qr.dto.SpeakerDto;
 import com.depromeet.qr.entity.Member;
 import com.depromeet.qr.entity.SeminarRoom;
 import com.depromeet.qr.entity.Speaker;
-import com.depromeet.qr.service.CommentService;
-import com.depromeet.qr.service.SeminarRoomService;
-import com.depromeet.qr.service.SpeakerService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -35,28 +31,32 @@ import io.swagger.annotations.ApiOperation;
 public class SeminarRoomController {
 
 	private final SeminarRoomService seminarRoomService;
-
 	private final SpeakerService speakerService;
-
 	private final CommentService commentService;
+	private final AccessionService accessionService;
+	private final MemberService memberService;
 
 	@ApiOperation(value="방 만들기")
 	@PostMapping("/api/seminar")
-	public List<Speaker> createSeminarRoom(@RequestBody SeminarCreateRequest request) throws MalformedURLException, IOException {
-		Member admin = seminarRoomService.createSeminar(request.getSeminarRoomDto());
-		List<Speaker> result = new ArrayList<Speaker>();
+	public SeminarCreateResponse createSeminarRoom(@RequestBody SeminarCreateRequest request) throws MalformedURLException, IOException {
+		Member member = memberService.getMember(request.getMemberId());
+		SeminarRoom seminarRoom = seminarRoomService.createSeminar(request.getSeminarRoomDto());
+		SeminarCreateResponse result = seminarRoom.toResponse();
+		List<SpeakerResponse> speakerList = new ArrayList<>();
 		for (SpeakerDto speakerDto : request.getSpeakerList()) {
-			speakerDto.setSeminarId(admin.getSeminarRoom().getSeminarId());
+			speakerDto.setSeminarId(seminarRoom.getSeminarId());
 			Speaker s = speakerService.createSpeaker(speakerDto);
-			result.add(s);
+			speakerList.add(s.toResponseDto());
 		}
+		result.setSpeakerList(speakerList);
+		accessionService.accessSeminarRoom(member,seminarRoom, AccessionRole.MANAGER);
 		return result;
 	}
 
-	@GetMapping("/api/seminar/enter/{seminarid}/{mid}")
-	public MemberAndCommentList enterSeminarByMember(@PathVariable Long seminarid, @PathVariable(name="mid",required=false) Long mid) {
+	@GetMapping("/api/seminar/enter/{seminarid}/{memberId}")
+	public MemberAndCommentList enterSeminarByMember(@PathVariable Long seminarid, @PathVariable(name="memberId",required=false) Long memberId) {
 		List<SpeakerAndCommentList> comments = commentService.getCommentsBySeminarRoom(seminarid);
-		Member member = seminarRoomService.enterSeminarByMember(seminarid, mid);
+		Member member = seminarRoomService.enterSeminarByMember(seminarid, memberId);
 		return MemberAndCommentList.builder().member(member).commentListBySpeaker(comments).build();
 	}
 
@@ -69,9 +69,28 @@ public class SeminarRoomController {
 	}
 	
 	@ApiOperation(value="seminarId를 통한 방조회")
-	@GetMapping("/api/seminar/room/{seminarid}")
-	public SeminarRoom getSeminarRoom (@PathVariable Long seminarid) {
-		return seminarRoomService.findSeminar(seminarid);
+	@GetMapping("/api/seminar/room/{seminarId}")
+	public SeminarRoom getSeminarRoom (@PathVariable Long seminarId) {
+		return seminarRoomService.findSeminar(seminarId);
 	}
-	
+
+	@PostMapping("/api/seminar/{seminarId}")
+	public MemberAndCommentList getSeminarRoomInfo(@PathVariable Long seminarId, @RequestBody SeminarEnterDto seminarEnterDto) {
+		SeminarRoom seminarRoom = seminarRoomService.findSeminar(seminarId);
+		Member member = memberService.getMember(seminarEnterDto.getMemberId());
+		try {
+			accessionService.findAccessionByMemberAndSeminar(member,seminarRoom);
+		}
+		catch (Exception e){
+			String password = seminarEnterDto.getPassword();
+			if(seminarRoom.getSeminarPassword().equals(password)){
+				accessionService.accessSeminarRoom(member,seminarRoom,AccessionRole.MEMBER);
+			}
+			else
+				throw new BadRequestException("WRONG SEMINAR ROOM PASSWORD");
+		}
+		List<SpeakerAndCommentList> comments = commentService.getCommentsBySeminarRoom(seminarId);
+		return MemberAndCommentList.builder().member(member).commentListBySpeaker(comments).build();
+	}
+
 }

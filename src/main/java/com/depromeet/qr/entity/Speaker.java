@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.depromeet.qr.base.BaseEntity;
+import com.depromeet.qr.dto.SpeakerResponse;
 import lombok.*;
 
 @Entity
@@ -27,4 +28,9 @@ public class Speaker extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "seminarId")
 	private SeminarRoom seminarRoom;
+
+	public SpeakerResponse toResponseDto(){
+		return SpeakerResponse.builder()
+				.speakerName(this.speakerName).speakerTopic(this.speakerTopic).organization(this.organization).build();
+	}
 }

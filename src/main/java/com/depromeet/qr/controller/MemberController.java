@@ -20,15 +20,16 @@ import com.depromeet.qr.service.MemberService;
 public class MemberController {
 	private final MemberService memberService;
 
-	@PostMapping("/api/member/join")
-	public ResponseEntity<Member> join(@RequestBody Long seminarId) {
-		Member member = memberService.createMember(seminarId);
-		
-		return ResponseEntity.ok().body(member);
-	}
-	@GetMapping("/api/member/{mid}")
-	public ResponseEntity<Member> getMember(@PathVariable Long mid) {
-		Member member = memberService.getMember(mid);
+//	@PostMapping("/api/member/join")
+//	public ResponseEntity<Member> join(@RequestBody Long seminarId) {
+//		Member member = memberService.createMember(seminarId);
+//
+//		return ResponseEntity.ok().body(member);
+//	}
+
+	@GetMapping("/api/member/{memberId}")
+	public ResponseEntity<Member> getMember(@PathVariable Long memberId) {
+		Member member = memberService.getMember(memberId);
 		return ResponseEntity.ok().body(member);
 	}
 	@GetMapping("/api/members/{seminarId}")
@@ -37,6 +38,7 @@ public class MemberController {
 	
 		return ResponseEntity.ok().body(members);
 	}
+
 	@DeleteMapping("/api/members/{seminarId}")
 	public ResponseEntity deleteMembersBySeminarId(@PathVariable Long seminarId) {
 		memberService.deleteMembersBySeminarRoom(seminarId);

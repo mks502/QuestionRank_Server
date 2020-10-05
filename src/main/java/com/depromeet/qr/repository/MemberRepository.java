@@ -10,8 +10,8 @@ import com.depromeet.qr.entity.SeminarRoom;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 	Member findOneBySeminarRoom(SeminarRoom seminarRoom);
-	Member findOneBySeminarRoomAndMid(SeminarRoom seminarRoom,Long mid);
-	Member findOneByMid(Long mid);
+	Member findOneBySeminarRoomAndMemberId(SeminarRoom seminarRoom, Long memberId);
+	Member findOneByMemberId(Long memberId);
 	List<Member> findAllBySeminarRoom(SeminarRoom seminarRoom);
 	Member findOneBySeminarRoomAndRole(SeminarRoom seminarRoom,String role);
 	Optional<Member> findOneByKakaoId(String kakaoId);

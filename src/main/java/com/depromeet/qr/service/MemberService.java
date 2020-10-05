@@ -8,7 +8,6 @@ import com.depromeet.qr.adapter.KakaoAdapter;
 import com.depromeet.qr.dto.KakaoUserDto;
 import com.depromeet.qr.exception.ApiFailedException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,6 @@ import com.depromeet.qr.exception.BadRequestException;
 import com.depromeet.qr.exception.NotFoundException;
 import com.depromeet.qr.repository.MemberRepository;
 import com.depromeet.qr.repository.SeminarRoomRepository;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +24,7 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final SeminarRoomRepository seminarRoomRepository;
 	private final KakaoAdapter kakaoAdapter;
+	private final SeminarRoomService seminarRoomService;
 
 
 	@Transactional
@@ -50,9 +49,7 @@ public class MemberService {
 
 	@Transactional
 	public Member createMember(Long seminarId) {
-		SeminarRoom seminarRoom = seminarRoomRepository.findOneBySeminarId(seminarId);
-		if (seminarRoom == null)
-			throw new NotFoundException();
+		SeminarRoom seminarRoom = seminarRoomService.findSeminar(seminarId);
 		Member member = Member.builder().role("USER").seminarRoom(seminarRoom).build();
 		if (memberRepository.findOneBySeminarRoom(seminarRoom) == null)
 			member.setRole("ADMIN");
@@ -60,8 +57,8 @@ public class MemberService {
 	}
 
 	@Transactional
-	public Member getMember(Long mid) {
-		Member member = memberRepository.findOneByMid(mid);
+	public Member getMember(Long memberId) {
+		Member member = memberRepository.findOneByMemberId(memberId);
 		if (member == null)
 			throw new NotFoundException("존재하지 않는 멤버입니다");
 		return member;
@@ -69,9 +66,7 @@ public class MemberService {
 
 	@Transactional
 	public List<Member> getMembersBySeminarRoom(Long seminarId) {
-		SeminarRoom seminarRoom = seminarRoomRepository.findOneBySeminarId(seminarId);
-		if (seminarRoom == null)
-			throw new NotFoundException();
+		SeminarRoom seminarRoom = seminarRoomService.findSeminar(seminarId);
 		List<Member> members = memberRepository.findAllBySeminarRoom(seminarRoom);
 		if (members == null)
 			throw new NotFoundException();
