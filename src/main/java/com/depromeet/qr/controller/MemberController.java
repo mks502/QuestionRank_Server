@@ -2,6 +2,7 @@ package com.depromeet.qr.controller;
 
 import java.util.List;
 
+import com.depromeet.qr.dto.SeminarRoomDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,31 +20,6 @@ import com.depromeet.qr.service.MemberService;
 @RequiredArgsConstructor
 public class MemberController {
 	private final MemberService memberService;
-
-//	@PostMapping("/api/member/join")
-//	public ResponseEntity<Member> join(@RequestBody Long seminarId) {
-//		Member member = memberService.createMember(seminarId);
-//
-//		return ResponseEntity.ok().body(member);
-//	}
-
-	@GetMapping("/api/member/{memberId}")
-	public ResponseEntity<Member> getMember(@PathVariable Long memberId) {
-		Member member = memberService.getMember(memberId);
-		return ResponseEntity.ok().body(member);
-	}
-	@GetMapping("/api/members/{seminarId}")
-	public ResponseEntity<List<Member>> getMembersBySeminarId(@PathVariable Long seminarId) {
-		List<Member> members = memberService.getMembersBySeminarRoom(seminarId);
-	
-		return ResponseEntity.ok().body(members);
-	}
-
-	@DeleteMapping("/api/members/{seminarId}")
-	public ResponseEntity deleteMembersBySeminarId(@PathVariable Long seminarId) {
-		memberService.deleteMembersBySeminarRoom(seminarId);
-		return ResponseEntity.accepted().build();
-	}
 
 	@PostMapping("/api/member/login")
 	public ResponseEntity<Member> login(@RequestBody String accessToken) {

@@ -20,14 +20,8 @@ public class Member extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long memberId;
-	@Builder.Default
-	private String role="USER";
 
 	private String kakaoId;
 	private String name;
 	private String profileImgUrl;
-
-	@ManyToOne
-	@JoinColumn(name = "seminarId")
-	private SeminarRoom seminarRoom;
 }
