@@ -31,6 +31,7 @@ public class Speaker extends BaseEntity {
 
 	public SpeakerResponse toResponseDto(){
 		return SpeakerResponse.builder()
+				.speakerId(this.speakerId)
 				.speakerName(this.speakerName).speakerTopic(this.speakerTopic).organization(this.organization).build();
 	}
 }

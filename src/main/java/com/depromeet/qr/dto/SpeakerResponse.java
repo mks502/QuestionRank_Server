@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class SpeakerResponse {
+    private Long speakerId;
     private String speakerName;
     private String speakerTopic;
     private String organization;

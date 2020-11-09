@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 @Builder
 public class SpeakerAndCommentList {
-	private Speaker speaker;
-	private List<Comment> commentList;
-	private List<Comment> commentRankingList;
+	private SpeakerResponse speaker;
+	private List<CommentDto> commentList;
+	private List<CommentDto> commentRankingList;
 }

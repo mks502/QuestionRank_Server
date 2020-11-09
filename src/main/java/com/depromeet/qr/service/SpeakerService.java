@@ -2,6 +2,7 @@ package com.depromeet.qr.service;
 
 import javax.transaction.Transactional;
 
+import com.depromeet.qr.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,10 @@ public class SpeakerService {
 		Speaker speaker = Speaker.builder().seminarRoom(seminar).speakerName(speakerDto.getSpeakerName())
 				.speakerTopic(speakerDto.getSpeakerTopic()).organization(speakerDto.getOrganization()).build();
 		return speakerRepository.save(speaker);
+	}
+
+	public Speaker getSpeakerBySpeakerId(Long speakerId){
+		return speakerRepository.findOneBySpeakerId(speakerId).orElseThrow(()->new NotFoundException("NOT FOUND SPEAKER"));
 	}
 
 }
