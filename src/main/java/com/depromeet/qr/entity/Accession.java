@@ -19,11 +19,11 @@ public class Accession extends BaseEntity {
 	@Column(name = "accession_id")
 	private long accessionId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "seminar_id", nullable = false)
 	private SeminarRoom seminarRoom;
 
