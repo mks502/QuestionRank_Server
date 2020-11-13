@@ -42,4 +42,11 @@ public class AnswerService {
 		}
 		return answerDtoList;
 	}
+
+	public AnswerResponseDto deleteAnswerById(Long answerId){
+		Answer answer = answerRepository.findById(answerId).orElseThrow(()->new NotFoundException("NOT FOUND ANSWER"));
+		answerRepository.delete(answer);
+		return AnswerResponseDto.builder().type("DELETE").answer(answer.toAnswerDto())
+				.build();
+	}
 }

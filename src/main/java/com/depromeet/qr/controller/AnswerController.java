@@ -25,4 +25,10 @@ public class AnswerController {
 	public List<AnswerDto> getAnswerListByComment (@PathVariable Long commentId) {
 		return answerService.findAllByAnswerByComment(commentId);
 	}
+
+	@ApiOperation(value="답변 삭제")
+	@DeleteMapping("/api/answers/{answerId}")
+	public AnswerResponseDto deleteAnswerByAnswerId(@PathVariable Long answerId){
+		return answerService.deleteAnswerById(answerId);
+	}
 }
