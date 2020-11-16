@@ -1,17 +1,10 @@
 package com.depromeet.qr.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-
 import com.depromeet.qr.base.BaseEntity;
+import com.depromeet.qr.dto.CommentDto;
 import lombok.*;
+
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -38,4 +31,8 @@ public class Comment extends BaseEntity {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
+	public CommentDto toCommentDto(){
+		return CommentDto.builder()
+				.commentId(this.commentId).content(this.content).likeCount(this.likeCount).member(this.member).speakerId(speaker.getSpeakerId()).build();
+	}
 }

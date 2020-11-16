@@ -11,6 +11,6 @@ import lombok.Data;
 @Builder
 public class CommentResponseDto {
 	private String type;
-	private Comment comment;
+	private CommentDto comment;
 	private List<Comment> commentRankingList;
 }
