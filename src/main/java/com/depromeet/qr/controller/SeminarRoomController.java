@@ -2,7 +2,6 @@ package com.depromeet.qr.controller;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,15 +9,8 @@ import com.depromeet.qr.constant.AccessionRole;
 import com.depromeet.qr.dto.*;
 import com.depromeet.qr.exception.BadRequestException;
 import com.depromeet.qr.service.*;
-import com.depromeet.qr.util.UtilEncoder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.depromeet.qr.entity.Member;
 import com.depromeet.qr.entity.SeminarRoom;
@@ -53,29 +45,15 @@ public class SeminarRoomController {
 		return result;
 	}
 
-	@GetMapping("/api/seminar/enter/{seminarid}/{memberId}")
-	public MemberAndCommentList enterSeminarByMember(@PathVariable Long seminarid, @PathVariable(name="memberId",required=false) Long memberId) {
-		List<SpeakerAndCommentList> comments = commentService.getCommentsBySeminarRoom(seminarid);
-		Member member = seminarRoomService.enterSeminarByMember(seminarid, memberId);
-		return MemberAndCommentList.builder().member(member).commentListBySpeaker(comments).build();
-	}
-
-	@ApiOperation(value="방 번호와 비밀번호를 통한 admin 입장")
-	@GetMapping("/api/seminar/enter/admin")
-	public MemberAndCommentList enterSeminarByAdmin(@ModelAttribute SeminarAdminDto seminarAdmin) {
-		List<SpeakerAndCommentList> comments = commentService.getCommentsBySeminarRoom(seminarAdmin.getSeminarId());
-		Member member = seminarRoomService.enterSeminarByAdmin(seminarAdmin.getSeminarId(), seminarAdmin.getPassword());
-		return MemberAndCommentList.builder().member(member).commentListBySpeaker(comments).build();
-	}
-	
-	@ApiOperation(value="seminarId를 통한 방조회")
-	@GetMapping("/api/seminar/room/{seminarId}")
+	@ApiOperation(value="seminarId를 통한 세미나방에 대한 정보만 조회")
+	@GetMapping("/api/seminar/{seminarId}")
 	public SeminarRoom getSeminarRoom (@PathVariable Long seminarId) {
 		return seminarRoomService.findSeminar(seminarId);
 	}
 
+	@ApiOperation(value="seminarId와 memberId를 통해 세미나 방에 대환 관련정보들 조회")
 	@PostMapping("/api/seminar/{seminarId}")
-	public MemberAndCommentList getSeminarRoomInfo(@PathVariable Long seminarId, @RequestBody SeminarEnterDto seminarEnterDto) {
+	public SeminarAndCommentList getSeminarRoomInfo(@PathVariable Long seminarId, @RequestBody SeminarEnterDto seminarEnterDto) {
 		SeminarRoom seminarRoom = seminarRoomService.findSeminar(seminarId);
 		Member member = memberService.getMember(seminarEnterDto.getMemberId());
 		try {
@@ -89,8 +67,38 @@ public class SeminarRoomController {
 			else
 				throw new BadRequestException("WRONG SEMINAR ROOM PASSWORD");
 		}
-		List<SpeakerAndCommentList> comments = commentService.getCommentsBySeminarRoom(seminarId);
-		return MemberAndCommentList.builder().member(member).commentListBySpeaker(comments).build();
+		List<SpeakerAndCommentList> comments = commentService.getCommentsBySeminarRoom(seminarId, seminarEnterDto.getMemberId());
+		return SeminarAndCommentList.builder().seminarRoom(seminarRoom).commentListBySpeaker(comments).build();
 	}
 
+	@ApiOperation(value="seminar 비밀번호를 통한 방 입장")
+	@PutMapping("/api/seminar")
+	public SeminarAndCommentList accessSeminarByPassword(@RequestBody SeminarEnterDto seminarEnterDto){
+
+		SeminarRoom seminarRoom = seminarRoomService.findBySeminarByPassword(seminarEnterDto.getPassword());
+		Member member = memberService.getMember(seminarEnterDto.getMemberId());
+		try {
+			accessionService.findAccessionByMemberAndSeminar(member,seminarRoom);
+		}
+		catch (Exception e){
+			String password = seminarEnterDto.getPassword();
+			if(seminarRoom.getSeminarPassword().equals(password)){
+				accessionService.accessSeminarRoom(member,seminarRoom,AccessionRole.MEMBER);
+			}
+			else
+				throw new BadRequestException("WRONG SEMINAR ROOM PASSWORD");
+		}
+		List<SpeakerAndCommentList> comments = commentService.getCommentsBySeminarRoom(seminarRoom.getSeminarId(),seminarEnterDto.getMemberId());
+		return SeminarAndCommentList.builder().seminarRoom(seminarRoom).commentListBySpeaker(comments).build();
+	}
+
+	@GetMapping("/api/seminar/{seminarId}/accession/role/{accessionRole}")
+	public MemberResponseDto getAnswerListByComment (@PathVariable Long seminarId,@PathVariable String accessionRole) {
+		return seminarRoomService.findByMemberListBySeminarAndRole(seminarId,accessionRole);
+	}
+
+	@GetMapping("/api/seminar/member/{memberId}")
+	public List<SeminarRoom> getSeminarByMember(@PathVariable Long memberId){
+		return seminarRoomService.getSeminarRoomListByMember(memberId);
+	}
 }

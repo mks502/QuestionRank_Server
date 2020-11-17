@@ -6,9 +6,15 @@ import static com.rosaloves.bitlyj.Bitly.shorten;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
+import com.depromeet.qr.constant.AccessionRole;
+import com.depromeet.qr.dto.MemberResponseDto;
+import com.depromeet.qr.entity.Accession;
+import com.depromeet.qr.repository.AccessionRepository;
 import com.depromeet.qr.util.UtilEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,8 +35,10 @@ public class SeminarRoomService {
 
 	private final SeminarRoomRepository seminarRoomRepository;
 	private final MemberRepository memberRepository;
+	private final AccessionRepository accessionRepository;
+
 	private final UtilEncoder utilEncoder;
-	
+
 	@Value("${environments.url}")
 	private String ADDR;
 
@@ -42,7 +50,6 @@ public class SeminarRoomService {
 		Long seminarId = seminar.getSeminarId();
 		SeminarRoom newSeminar = findSeminar(seminarId);
 		newSeminar.setFullURL(ADDR+"/"+seminarId);
-		System.out.println(newSeminar.getFullURL());
 		newSeminar.setShortURL(createShortUrl(newSeminar.getFullURL()));
 
 		return seminarRoomRepository.save(newSeminar);
@@ -63,29 +70,36 @@ public class SeminarRoomService {
 		return seminarRoom;
 	}
 
-	@Transactional
-	public Member enterSeminarByMember(Long seminarId, Long mid) {
-		SeminarRoom seminar = findSeminar(seminarId);
-		Member member = memberRepository.findOneBySeminarRoomAndMemberId(seminar, mid);
-		if (member == null) {
-			member = Member.builder().role("USER").seminarRoom(seminar).build();
-			member = memberRepository.save(member);
-		}
-		return member;
+	public SeminarRoom findBySeminarByPassword(String password){
+		return seminarRoomRepository.findOneBySeminarPassword(password).orElseThrow(()-> new NotFoundException("WRONG PASSWORD"));
 	}
 
-	@Transactional
-	public Member enterSeminarByAdmin(Long seminarId, String password) {
-		SeminarRoom seminar = findSeminar(seminarId);
-		if (!seminar.getSeminarPassword().equals(password))
-			throw new BadRequestException("wrong password");
-		Member member = memberRepository.findOneBySeminarRoomAndRole(seminar, "ADMIN");
-		return member;
+	public MemberResponseDto findByMemberListBySeminarAndRole(Long seminarId, String accessionRole){
+		SeminarRoom seminarRoom = findSeminar(seminarId);
+		List<Accession> accessionList;
+		List<Member> memberList = new ArrayList<Member>();
+		try {
+			AccessionRole role =AccessionRole.valueOf(accessionRole.toUpperCase());
+			accessionList = accessionRepository.findAllBySeminarRoomAndAccessionRole(seminarRoom,role);
+		}
+		catch (Exception e){
+			throw new BadRequestException("WRONG REQUEST");
+		}
+		for (Accession accession : accessionList){
+			memberList.add(accession.getMember());
+		}
+		return MemberResponseDto.builder()
+				.memberList(memberList).type(accessionRole.toUpperCase()).build();
 	}
-	
-//	@Transactional
-//	public Member updateSeminarRoom(Long seminarId, Long memberId, SeminarRoomDto seminar) {
-//		memberService.checkRoleAdmin(memberId);
-//		SeminarRoom seminarRoom = findSeminar(seminarId);
-//	}
+
+	public List<SeminarRoom> getSeminarRoomListByMember(Long memberId){
+		Member member = memberRepository.findOneByMemberId(memberId);
+		List<Accession> accessionList = accessionRepository.findAllByMember(member);
+		List<SeminarRoom> seminarRoomList = new ArrayList<>();
+
+		for(Accession accession : accessionList){
+			seminarRoomList.add(accession.getSeminarRoom());
+		}
+		return seminarRoomList;
+	}
 }

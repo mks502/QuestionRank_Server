@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.depromeet.qr.entity.SeminarRoom;
 
 public interface SeminarRoomRepository extends JpaRepository<SeminarRoom, Long> {
-	public Optional<SeminarRoom> findOneBySeminarId(Long seminarId);
-	public List<SeminarRoom> findAllBySeminarId(Long seminarId);
-	
+	Optional<SeminarRoom> findOneBySeminarId(Long seminarId);
+	List<SeminarRoom> findAllBySeminarId(Long seminarId);
+	Optional<SeminarRoom> findOneBySeminarPassword(String seminarPassword);
 }
