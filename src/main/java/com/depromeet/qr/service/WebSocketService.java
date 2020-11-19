@@ -17,11 +17,6 @@ public class WebSocketService {
 	
 	private final SimpMessagingTemplate template;
 
-//	@Autowired
-//	public WebSocketService(SimpMessagingTemplate template) {
-//		this.template = template;
-//	}
-	
 	public void sendCommentRankingListBySpeaker(Long seminarId,Long speakerId) {
 		List<Comment> commentRankingList = commentService.getCommentRankListBySpeaker(speakerId);
 		this.template.convertAndSend("/subscribe/seminar/"+seminarId, commentRankingList);
